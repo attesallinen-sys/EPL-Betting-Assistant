@@ -9,13 +9,15 @@ alwaysApply: true
 
 1. **Load sources**: Read `knowledge/sources.md` to get the full list of prediction sites and URLs.
 2. **Get fixtures**: Fetch the upcoming matchweek fixture list before consulting any prediction sources. Use BBC Sport, WebSearch, or premierleague.com as described in `knowledge/sources.md`.
-3. **Prioritize**: Start with P1 (primary) prediction sources, then P2 (secondary).
-4. **Fetch predictions source by source**: For each source:
+3. **Get league context**: Fetch current league table and form data (see "League Table and Form Data" in `knowledge/sources.md`). Record league position, points, and home/away W-D-L for each team in the matchweek. This data is required for writing specific reasoning later.
+4. **Prioritize**: Start with P1 (primary) prediction sources, then P2 (secondary).
+5. **Fetch predictions source by source**: For each source:
    - First try `WebFetch` on the source's direct URL.
    - If that fails or returns incomplete data, use `WebSearch` with the source-specific query templates from `knowledge/sources.md`.
-   - Extract: predicted outcome (Home/Draw/Away), probabilities if provided, predicted score if available, and any reasoning or key factors mentioned.
-5. **Record everything**: For each fixture, maintain a working tally of predictions across sources. Note which sources were consulted and what each one predicted.
-6. **Handle gaps honestly**: If a source has not posted predictions or is unreachable, note it. Never fabricate predictions to fill gaps.
+   - Extract: predicted outcome (Home/Draw/Away), probabilities if provided, predicted score if available, Over/Under 2.5 and BTTS predictions, and any reasoning or key factors mentioned.
+6. **Fallback source discovery**: After completing all P1 and P2 sources, count how many P1 sources returned usable data. If fewer than 3, search for alternative prediction sites using `premier league predictions gameweek [number] [year]` and extract data from the best result found. Note the discovered source for potential future inclusion.
+7. **Record everything**: For each fixture, maintain a working tally of predictions across sources. Note which sources were consulted and what each one predicted, including O/U and BTTS data.
+8. **Handle gaps honestly**: If a source has not posted predictions or is unreachable, note it. Never fabricate predictions to fill gaps.
 
 ## Search Strategy
 
@@ -34,6 +36,7 @@ alwaysApply: true
 
 - If a prediction source has not yet posted predictions for the matchweek, note it and exclude it from the consensus calculation. Do not hold up the report.
 - If a source is unavailable or returns errors, skip it and note the issue in the report's Sources section.
-- If fewer than 3 sources have predictions available, note this prominently in the report and recommend re-running the agent closer to match day.
+- If fewer than 3 P1 sources return data, trigger fallback source discovery (step 6 above) before writing the report.
+- If fewer than 3 total sources have predictions available after fallback attempts, note this prominently in the report and recommend re-running the agent closer to match day.
 - Never guess or fabricate predictions to fill gaps. A report with "3/4 sources" is better than one with made-up data.
 - If a fixture has been postponed or rescheduled, note it in the report and exclude it from predictions.

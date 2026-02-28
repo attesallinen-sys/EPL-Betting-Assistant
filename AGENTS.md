@@ -33,9 +33,10 @@ The detailed step-by-step task checklist is in `tasks/matchweek-predictions.md`.
 |----------|----------|---------|
 | Prediction sources | `knowledge/sources.md` | Curated list of free prediction sites with URLs, priorities, and extraction guidance |
 | EPL context | `knowledge/epl-context.md` | Background on the Premier League: teams, format, key terms |
-| Task checklist | `tasks/matchweek-predictions.md` | Step-by-step instructions for the prediction workflow |
+| Task checklist | `tasks/matchweek-predictions.md` | Step-by-step instructions for the prediction workflow (Phases 0-6) |
 | Report template | `templates/matchweek-report-template.md` | Markdown template for structuring matchweek reports |
-| Report archive | `reports/index.md` | Index of all published prediction reports |
+| Report archive | `reports/index.md` | Index of all published prediction reports with accuracy tracking |
+| Accuracy log | `reports/accuracy-log.md` | Per-source and cumulative prediction accuracy tracking |
 | Report output | `reports/` | Directory where finished prediction reports are saved |
 
 ## Quality Standards
