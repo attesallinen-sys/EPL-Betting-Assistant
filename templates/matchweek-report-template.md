@@ -2,7 +2,7 @@
 
 **Match dates**: [YYYY-MM-DD] -- [YYYY-MM-DD]
 **Report generated**: [YYYY-MM-DD]
-**Sources consulted**: [X] of 6 ([list source names that returned data])
+**Sources consulted**: [X] of [Y] ([list source names that returned data])
 
 ---
 
@@ -18,24 +18,26 @@
 
 <!-- Confidence tiers: High = 4+ agree or 3/3 with avg prob > 65%; Moderate = 3 agree or 2/2 with avg prob > 70%; Low = everything else / splits -->
 
-| # | Home | Away | Consensus | Sources | Confidence | Avg Prob |
-|---|------|------|-----------|---------|------------|----------|
-| 1 | [Home Team] | [Away Team] | [Home Win / Draw / Away Win / Split] | [X/Y] | [High / Moderate / Low] | [XX%] |
-| 2 | | | | | | |
-| 3 | | | | | | |
-| 4 | | | | | | |
-| 5 | | | | | | |
-| 6 | | | | | | |
-| 7 | | | | | | |
-| 8 | | | | | | |
-| 9 | | | | | | |
-| 10 | | | | | | |
+| # | Home | Away | Consensus | Sources | Confidence | Avg Prob | Market Impl% | Edge |
+|---|------|------|-----------|---------|------------|----------|-------------|------|
+| 1 | [Home Team] | [Away Team] | [Home Win / Draw / Away Win / Split] | [X/Y] | [High / Moderate / Low] | [XX%] | [XX%] | [+/-X%] |
+| 2 | | | | | | | | |
+| 3 | | | | | | | | |
+| 4 | | | | | | | | |
+| 5 | | | | | | | | |
+| 6 | | | | | | | | |
+| 7 | | | | | | | | |
+| 8 | | | | | | | | |
+| 9 | | | | | | | | |
+| 10 | | | | | | | | |
+
+<!-- Edge = Avg Prob - Market Impl%. Positive edge means sources see more value than the market. -->
 
 ---
 
 ## Detailed Match Predictions
 
-<!-- Repeat this block for each fixture. Only include source rows for sources that actually had predictions for this fixture -- no placeholder rows. -->
+<!-- Repeat this block for each fixture. Only include source rows for sources that actually had predictions. -->
 
 ### [#]. [Home Team] vs [Away Team]
 
@@ -53,9 +55,14 @@
 
 <!-- Only list sources that had predictions for this fixture. Omit sources with no data. -->
 
+**Market odds**: [Home X.XX / Draw X.XX / Away X.XX] → Implied: [Home XX% / Draw XX% / Away XX%]
+**Edge**: Consensus [XX%] vs Market [XX%] = [+/-X% edge on consensus outcome]
+
 **Goals market**: [X/Y sources say Over 2.5 | X/Y sources say BTTS Yes] (omit if no sources provide this data)
 
-**Key reasoning**: [2-3 sentences synthesizing why sources lean toward this outcome. MUST include at least one specific stat: league position, W-D-L record, goals scored/conceded, recent form run, or head-to-head record. Reference current form data gathered in Phase 1.]
+**xG context**: [Optional -- include only when xG data reveals a meaningful signal. E.g., "Team X are overperforming their xG by 4.2 goals this season (xG 32.1, actual 36.3), suggesting regression risk in attack." Or: "Team Y's xGD of +12.3 ranks 4th in the league despite sitting 8th on actual points, indicating underlying quality." Omit this line entirely if xG simply confirms what the league table and form already show, or if xG data is unavailable.]
+
+**Key reasoning**: [2-3 sentences synthesizing why sources lean toward this outcome. MUST include at least one specific stat: league position, W-D-L record, goals scored/conceded, recent form run, or head-to-head record. Reference league table data from the data file. Note if the market agrees or disagrees with the consensus. Where xG context is included above, integrate it into the reasoning narrative.]
 
 ---
 
@@ -63,13 +70,13 @@
 
 ## Value Picks
 
-High-confidence predictions where sources strongly agree. A fixture qualifies only if (a) at least 3 sources provided a prediction and (b) the confidence tier is High or Moderate.
+High-confidence predictions where sources strongly agree AND show positive edge vs. market odds. A fixture qualifies if (a) at least 3 sources provided a prediction, (b) the confidence tier is High or Moderate, and (c) ideally the consensus probability exceeds the market implied probability (positive edge).
 
-<!-- List 1-3 qualifying fixtures. If no fixtures meet both criteria, state: "No fixtures met the minimum threshold for Value Picks this gameweek (requires 3+ sources and High/Moderate confidence). Consider the Moderate-confidence picks in the detailed section above." -->
+<!-- List 1-3 qualifying fixtures. If no fixtures meet all criteria, note it and list the best available picks meeting criteria (a) and (b). -->
 
-### [Home Team] vs [Away Team] -- [Predicted Outcome] ([Confidence tier], [X/Y sources], avg [XX%])
+### [Home Team] vs [Away Team] -- [Predicted Outcome] ([Confidence tier], [X/Y sources], avg [XX%], edge [+X%])
 
-[1-2 sentences on why this is a strong pick, referencing specific stats.]
+[1-2 sentences on why this is a strong pick, referencing specific stats and the market edge.]
 
 ---
 
@@ -77,12 +84,13 @@ High-confidence predictions where sources strongly agree. A fixture qualifies on
 
 Fixtures where prediction sources disagree significantly.
 
-<!-- List fixtures where no clear consensus exists (e.g., 2-2 split, or 2-1-1). -->
+<!-- List fixtures with no clear consensus (e.g., 2-2 split, or 2-1-1). Note what the market odds imply. -->
 
 ### [Home Team] vs [Away Team]
 
 - **Source split**: [X sources Home, X sources Draw, X sources Away]
-- **Why the disagreement**: [1-2 sentences explaining what makes this fixture unpredictable -- evenly matched teams, form contradicting league position, key injury uncertainty, etc.]
+- **Market leans**: [What the odds imply as most likely]
+- **Why the disagreement**: [1-2 sentences explaining what makes this fixture unpredictable. Note whether the market aligns with one side of the split.]
 
 ---
 
@@ -97,9 +105,9 @@ Suggested accumulators built from the highest-confidence picks. These are illust
 - [Fixture]: [Prediction] ([Confidence tier])
 
 **Value Accumulator** (3-4 selections, higher combined odds):
-- [Fixture]: [Prediction] ([Confidence tier])
-- [Fixture]: [Prediction] ([Confidence tier])
-- [Fixture]: [Prediction] ([Confidence tier])
+- [Fixture]: [Prediction] ([Confidence tier], edge [+X%])
+- [Fixture]: [Prediction] ([Confidence tier], edge [+X%])
+- [Fixture]: [Prediction] ([Confidence tier], edge [+X%])
 
 *Accumulators are for illustration only. All selections carry risk and outcomes are not guaranteed.*
 
@@ -109,15 +117,17 @@ Suggested accumulators built from the highest-confidence picks. These are illust
 
 <!-- List all sources consulted, with links. Only include sources that were actually attempted. -->
 
-1. [Forebet -- Premier League Predictions](https://www.forebet.com/en/football-tips-and-predictions-for-england/premier-league) -- [coverage note: full/partial/unavailable]
+1. [Forebet -- Premier League Predictions](https://www.forebet.com/en/football-tips-and-predictions-for-england/premier-league) -- [coverage note]
 2. [PredixSport -- Premier League AI Predictions](https://www.predixsport.com/premier_league_predictions) -- [coverage note]
-3. [FootyStats -- Premier League Predictions](https://footystats.org/england/premier-league/predictions) -- [coverage note]
-4. [Winning Arena](https://winningarena.com/) -- [coverage note]
-5. [Before You Bet -- EPL Tips](https://www.beforeyoubet.com.au/sports-betting/epl-tips) -- [coverage note]
-6. [Bluecrossbar](https://bluecrossbar.com/) -- [coverage note]
+3. [Bueon -- Premier League AI Predictions](https://www.bueon.com/en/ai-predictions/competition/england-premier-league) -- [coverage note]
+4. [Sports Mole -- Premier League Predictions](https://www.sportsmole.co.uk/football/premier-league-predictions/) -- [coverage note]
+5. [Winning Arena](https://winningarena.com/) -- [coverage note]
+6. [Before You Bet -- EPL Tips](https://www.beforeyoubet.com.au/sports-betting/epl-tips) -- [coverage note]
 
-<!-- Note any sources that were unavailable or had not yet posted predictions: -->
-<!-- **Note**: [Source name] was unavailable / had not published predictions at the time of report generation. [Reason if known.] -->
+**Odds source**: [Source name and URL]
+**xG data source**: [Source name and URL, or "Not available" if xG data could not be fetched]
+
+<!-- Note any sources that were unavailable or had not yet posted predictions. -->
 
 ---
 

@@ -1,42 +1,59 @@
 ---
-description: Research workflow for gathering EPL match predictions from multiple sources
+description: Research workflow for the two-agent EPL prediction pipeline
 alwaysApply: true
 ---
 
 # Research Workflow
 
-## Order of Operations
+This project uses a two-agent pipeline. Read `AGENTS.md` for the full workflow overview.
 
-1. **Load sources**: Read `knowledge/sources.md` to get the full list of prediction sites and URLs.
-2. **Get fixtures**: Fetch the upcoming matchweek fixture list before consulting any prediction sources. Use BBC Sport, WebSearch, or premierleague.com as described in `knowledge/sources.md`.
-3. **Get league context**: Fetch current league table and form data (see "League Table and Form Data" in `knowledge/sources.md`). Record league position, points, and home/away W-D-L for each team in the matchweek. This data is required for writing specific reasoning later.
-4. **Prioritize**: Start with P1 (primary) prediction sources, then P2 (secondary).
-5. **Fetch predictions source by source**: For each source:
+## Agent 1: Data Collection
+
+Agent 1 follows `tasks/fetch-matchweek-data.md`. Its job is to gather objective data:
+
+1. **Load sources**: Read `knowledge/sources.md` for fixture sources, league table sources, xG sources, and odds sources.
+2. **Get fixtures**: Fetch the matchweek fixture list. Use BBC Sport, WebSearch, or premierleague.com.
+3. **Get league context**: Fetch current league table and form data. Record league position, points, home/away W-D-L, goals scored/conceded for each team.
+4. **Get xG data**: Fetch expected goals data from FBref or Understat (via `WebSearch` -- direct fetch usually fails). Record xG, xGA, xGD per team. Calculate overperformance vs. actual goals and flag regression candidates. See "xG Data Sources" in `knowledge/sources.md`.
+5. **Get bookmaker odds**: Fetch odds from the sources listed in the "Odds Sources" section of `knowledge/sources.md`. Convert to implied probabilities (removing overround).
+6. **Save data file**: Output `data/GWxx-matchweek-data.md` using the template at `templates/matchweek-data-template.md`.
+
+## Agent 2: Predictions & Report
+
+Agent 2 follows `tasks/matchweek-predictions.md`. Its job is to gather predictions, analyze, and write the report:
+
+1. **Load data file**: Read `data/GWxx-matchweek-data.md` (produced by Agent 1). If it doesn't exist, tell the user to run Agent 1 first.
+2. **Load accuracy data**: Read `reports/accuracy-log.md` for source weights. Use default weight 1.0 if no data exists yet.
+3. **Fetch predictions source by source**: For each source in priority order:
    - First try `WebFetch` on the source's direct URL.
-   - If that fails or returns incomplete data, use `WebSearch` with the source-specific query templates from `knowledge/sources.md`.
-   - Extract: predicted outcome (Home/Draw/Away), probabilities if provided, predicted score if available, Over/Under 2.5 and BTTS predictions, and any reasoning or key factors mentioned.
-6. **Fallback source discovery**: After completing all P1 and P2 sources, count how many P1 sources returned usable data. If fewer than 3, search for alternative prediction sites using `premier league predictions gameweek [number] [year]` and extract data from the best result found. Note the discovered source for potential future inclusion.
-7. **Record everything**: For each fixture, maintain a working tally of predictions across sources. Note which sources were consulted and what each one predicted, including O/U and BTTS data.
-8. **Handle gaps honestly**: If a source has not posted predictions or is unreachable, note it. Never fabricate predictions to fill gaps.
+   - If that fails, use `WebSearch` with source-specific query templates from `knowledge/sources.md`.
+   - Extract: predicted outcome, probabilities, predicted score, O/U 2.5, BTTS, and reasoning.
+4. **Fallback source discovery**: If fewer than 3 P1 sources returned data, search for alternatives.
+5. **Analyze with weighted consensus**: Apply source weights when tallying predictions. Compare consensus probabilities to market odds from the data file.
+6. **Apply xG analysis**: Use xG data from the data file to flag regression risks and cross-check the consensus. Include xG context in reasoning where it provides a meaningful signal.
+7. **Record everything**: Maintain a working tally per fixture. Note which sources were consulted.
+8. **Handle gaps honestly**: Never fabricate predictions to fill gaps. If xG data is unavailable, proceed without it.
 
 ## Search Strategy
 
 - Use source-specific URLs first (more reliable than search), then fall back to `WebSearch`.
 - When using WebSearch, prefer `site:` queries to target specific prediction sites.
-- For fixture data, search for "Premier League fixtures gameweek [number]" or "Premier League fixtures [date]".
-- If predictions for a specific fixture are missing from a source, try searching for "[home team] vs [away team] prediction [source name]".
+- For fixture data (Agent 1), search for "Premier League fixtures gameweek [number]" or "Premier League fixtures [date]".
+- For odds data (Agent 1), try Forebet's odds column first, then OddsPortal, then WebSearch.
+- For xG data (Agent 1), `WebSearch` is the reliable method. FBref and Understat pages are JavaScript-heavy and almost always fail with `WebFetch`. Use `site:fbref.com` or `site:understat.com` queries, or general queries like "Premier League xG table 2025-2026".
+- If predictions for a specific fixture are missing from a source, try "[home team] vs [away team] prediction [source name]".
 
 ## Fetching Best Practices
 
-- When using `WebFetch`, prediction sites may be JavaScript-heavy. If the fetch returns minimal content, fall back to `WebSearch` for that source.
-- Process one source at a time to keep the data organized.
-- After fetching from each source, immediately record the extracted predictions before moving to the next source.
+- Prediction sites may be JavaScript-heavy. If `WebFetch` returns minimal content, fall back to `WebSearch`.
+- Process one source at a time to keep data organized.
+- After fetching from each source, immediately record the extracted data before moving to the next.
 
 ## Handling Limitations
 
-- If a prediction source has not yet posted predictions for the matchweek, note it and exclude it from the consensus calculation. Do not hold up the report.
-- If a source is unavailable or returns errors, skip it and note the issue in the report's Sources section.
-- If fewer than 3 P1 sources return data, trigger fallback source discovery (step 6 above) before writing the report.
-- If fewer than 3 total sources have predictions available after fallback attempts, note this prominently in the report and recommend re-running the agent closer to match day.
-- Never guess or fabricate predictions to fill gaps. A report with "3/4 sources" is better than one with made-up data.
-- If a fixture has been postponed or rescheduled, note it in the report and exclude it from predictions.
+- If a source has not posted predictions yet, note it and exclude from consensus. Do not hold up the report.
+- If a source is unavailable, skip it and note the issue in the report's Sources section.
+- If fewer than 3 P1 sources return data, trigger fallback source discovery before writing the report.
+- If fewer than 3 total sources have predictions after fallback, note this prominently and recommend re-running closer to match day.
+- Never fabricate predictions. A report with "3/4 sources" is better than made-up data.
+- If a fixture has been postponed, note it and exclude from predictions.

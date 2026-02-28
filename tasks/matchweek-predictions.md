@@ -1,41 +1,37 @@
 # Matchweek Predictions -- Task Checklist
 
-Follow this checklist step by step every time you generate a matchweek prediction report. Do not skip phases. Check off each item as you complete it.
+This is the task checklist for **Agent 2 (Predictions & Report)**. It assumes Agent 1 has already produced a data file at `data/GWxx-matchweek-data.md` containing fixtures, league table, xG data, and bookmaker odds.
+
+Follow this checklist step by step every time you generate a matchweek prediction report. Do not skip phases.
 
 ---
 
 ## Phase 0: Setup
 
-- [ ] Determine the **gameweek number** and **match dates** from the user's prompt (e.g., Gameweek 28, Saturday 2026-03-07).
-- [ ] Read `knowledge/sources.md` to review the prediction sources and how to fetch from each.
+- [ ] Determine the **gameweek number** and **match dates** from the user's prompt.
+- [ ] Read the data file at `data/GWxx-matchweek-data.md` (produced by Agent 1). If it does not exist, inform the user they need to run Agent 1 first.
+- [ ] Read `knowledge/sources.md` to review prediction sources and how to fetch from each.
 - [ ] Read `knowledge/epl-context.md` for team context and key terms.
+- [ ] Read `reports/accuracy-log.md` for current source weights (default 1.0 if no accuracy data yet).
 - [ ] Skim the most recent report in `reports/` (if one exists) for continuity.
 
 ---
 
-## Phase 1: Fetch Fixtures and Context
+## Phase 1: Load Matchweek Data
 
-- [ ] Fetch the upcoming fixture list using the fixture data sources described in `knowledge/sources.md`:
-  1. Try `WebFetch` on BBC Sport Premier League fixtures page.
-  2. If that fails, use `WebSearch` for "Premier League fixtures gameweek [number]".
-  3. As a last resort, try the official premierleague.com fixtures page.
-- [ ] Record all fixtures for the matchweek in a working list:
-  - Home team
-  - Away team
-  - Date
-  - Kickoff time (UK time)
-- [ ] Confirm the fixture count matches expectations (typically 10 matches per gameweek, but can vary due to postponements or rescheduling).
-- [ ] **Fetch league table and form data** for use in reasoning:
-  1. Try `WebFetch` on BBC Sport Premier League table page.
-  2. If that fails, use `WebSearch` for "Premier League table standings [date]".
-  3. Record for each team in the matchweek: league position, points, home W-D-L, away W-D-L, goals scored, goals conceded.
-  4. Note any relevant recent form (last 5 results) or injury/suspension news found during research.
+- [ ] From the data file, load:
+  - All fixtures (home, away, date, kickoff time)
+  - League table positions, points, W-D-L (home and away), goals scored/conceded
+  - Expected goals (xG) data: xG, xGA, xGD, overperformance, and regression flags per team
+  - Bookmaker odds and implied probabilities for each fixture
+- [ ] Verify data completeness: all fixtures present, odds available for most fixtures.
+- [ ] Note any data gaps flagged in the data file's "Data Quality Notes" and "xG Notes" sections. If xG data is missing, proceed without it -- it is supplementary.
 
 ---
 
 ## Phase 2: Gather Predictions
 
-Work through sources in priority order. For each source, attempt to retrieve predictions for **all** fixtures in the matchweek.
+Work through sources in priority order. For each source, attempt to retrieve predictions for **all** fixtures.
 
 ### P1 Sources (always consult)
 
@@ -47,9 +43,14 @@ Work through sources in priority order. For each source, attempt to retrieve pre
   - For each fixture, record: win/draw/loss probabilities, over/under 2.5 probability, BTTS probability, any analysis text.
   - If the page doesn't load, search: `site:predixsport.com premier league predictions`.
 
-- [ ] **FootyStats**: Fetch predictions from `footystats.org/england/premier-league/predictions`.
-  - For each fixture, record: win/draw/loss probabilities, over/under 2.5 probability, BTTS probability, team form context.
-  - If the page doesn't load, search: `site:footystats.org premier league predictions`.
+- [ ] **Bueon**: Fetch predictions from `bueon.com/en/ai-predictions/competition/england-premier-league`.
+  - For each fixture, record: home/draw/away probability percentages.
+  - If the page doesn't load, search: `site:bueon.com england premier league ai predictions`.
+
+- [ ] **Sports Mole**: Fetch from `sportsmole.co.uk/football/premier-league-predictions/`.
+  - Find the current matchweek's Saturday and Sunday prediction articles and fetch both.
+  - For each fixture, record: predicted score, qualitative reasoning.
+  - If the index page doesn't work, search: `site:sportsmole.co.uk premier league predictions [day] [month] [year]`.
 
 ### P2 Sources (consult after P1)
 
@@ -57,24 +58,29 @@ Work through sources in priority order. For each source, attempt to retrieve pre
   - For each fixture, record: predicted outcome, over/under, BTTS, any expert reasoning.
 
 - [ ] **Before You Bet**: Search `site:beforeyoubet.com.au EPL matchday [number] preview betting tips` and fetch the results.
-  - For each fixture covered, record: predicted outcome, specific betting tip, qualitative reasoning, any stats or form analysis mentioned.
+  - For each fixture covered, record: predicted outcome, specific betting tip, qualitative reasoning.
 
-- [ ] **Bluecrossbar**: Fetch predictions from `bluecrossbar.com`.
-  - For each fixture, record: predicted outcome, any confidence metric, predicted score.
-  - If the page doesn't load (common -- JavaScript-rendered), search: `site:bluecrossbar.com premier league predictions`. Do not spend excessive time on this source.
+- [ ] **Flashscore**: Search `site:flashscore.co.uk premier league gameweek [number] predictions` and fetch the results.
+  - For each fixture covered, record: predicted outcome/tip, qualitative reasoning, form/H2H stats.
+
+- [ ] **BettingPros**: Search `site:bettingpros.com premier league matchday [number] predictions [year]` and fetch the results.
+  - For each fixture covered, record: predicted outcome, qualitative reasoning, stats.
+
+- [ ] **Action Network**: Search `site:actionnetwork.com premier league best bets predictions picks [month] [year]` and fetch the results.
+  - For each fixture covered, record: predicted outcome, win probability (if provided), reasoning.
 
 ### Fallback source discovery
 
 - [ ] **Count usable P1 sources**. If fewer than 3 P1 sources returned prediction data:
   1. Search `premier league predictions gameweek [number] [year]` and evaluate the top results.
-  2. Look for sites with structured predictions (probabilities, predicted outcomes) rather than opinion-only articles.
+  2. Look for sites with structured predictions (probabilities, predicted outcomes).
   3. Record predictions from the best alternative source found.
-  4. Note the discovered source in the report's Sources section for potential future inclusion.
+  4. Note the discovered source in the report's Sources section.
 
 ### Data quality check
 
-- [ ] Verify you have predictions from at least 3 sources total. If fewer than 3, note this prominently in the report and recommend re-running closer to match day.
-- [ ] If any source was unavailable or had not yet posted predictions, note which ones and why.
+- [ ] Verify predictions from at least 3 sources total. If fewer, note this prominently and recommend re-running closer to match day.
+- [ ] Note any sources that were unavailable or had not yet posted predictions.
 
 ---
 
@@ -82,35 +88,64 @@ Work through sources in priority order. For each source, attempt to retrieve pre
 
 For each fixture in the matchweek:
 
-- [ ] **Tally predictions**: Count how many sources predict Home Win, Draw, and Away Win.
-- [ ] **Determine consensus**: The outcome with the most sources backing it is the consensus prediction. Record the confidence as "X out of Y sources agree" (where Y = number of sources that had predictions for that fixture).
+### Consensus and confidence
+
+- [ ] **Tally predictions**: Count sources predicting Home Win, Draw, and Away Win.
+- [ ] **Apply source weights**: Read current source weights from `reports/accuracy-log.md` (see Source Weights section). If no weights exist yet, use 1.0 for all sources.
+  - For each outcome, compute weighted score: `sum of weights for sources backing that outcome`.
+  - The outcome with the highest weighted score is the consensus.
+  - Example: if Forebet (weight 1.2) and PredixSport (weight 1.0) say Home, and Bueon (weight 1.0) and Sports Mole (weight 0.9) say Draw, the Home weighted score is 2.2 vs Draw weighted score of 1.9 -- Home wins.
+- [ ] **Determine consensus**: Record the weighted consensus outcome and the unweighted source fraction (e.g., "3/5 sources").
 - [ ] **Assign confidence tier** based on these definitions:
   - **High**: 4+ sources agree, OR 3/3 agree with average probability > 65%
   - **Moderate**: 3 sources agree (not meeting High criteria), OR 2/2 agree with average probability > 70%
   - **Low**: 2 sources agree with average probability <= 70%, or any split decision
-- [ ] **Aggregate probabilities**: If multiple sources provide probability percentages, note the range (e.g., "Home win probability: 55-72% across sources").
-- [ ] **Aggregate goals markets**: For each fixture, tally Over/Under 2.5 and BTTS predictions across sources that provide them.
-- [ ] **Synthesize reasoning**: Combine the key factors mentioned across sources into 2-3 sentences explaining why the consensus leans this way. **Every fixture's reasoning must include at least one specific stat** (e.g., league position, W-D-L record, goals scored/conceded, recent form run). Use the table/form data gathered in Phase 1.
-- [ ] **Flag split decisions**: If sources are evenly split (e.g., 2 Home, 2 Away, 1 Draw), flag this fixture as a "Split Decision" for the dedicated section.
-- [ ] **Identify value picks**: Fixtures that qualify for the Value Picks section must meet **both** criteria: (a) at least 3 sources provided a prediction for the fixture, and (b) the confidence tier is High or Moderate. If no fixtures meet these criteria, state this explicitly in the Value Picks section.
+
+### Probabilities and odds comparison
+
+- [ ] **Aggregate source probabilities**: Note the range across sources (e.g., "Home win: 55-72%").
+- [ ] **Compare consensus to market odds**: For each fixture, compare the consensus probability to the implied probability from bookmaker odds (loaded from data file).
+  - If consensus probability > implied probability by 5+ percentage points, flag as a **potential value bet** (consensus sees more edge than the market).
+  - If consensus probability < implied probability by 5+ percentage points, flag as a **market disagreement** (the market is more confident than sources -- proceed with caution).
+  - Record the edge: `Edge = Average consensus probability - Fair implied probability from odds`.
+
+### Goals markets and reasoning
+
+- [ ] **Aggregate goals markets**: Tally Over/Under 2.5 and BTTS predictions across sources.
+- [ ] **Synthesize reasoning**: Combine key factors from sources into 2-3 sentences per fixture. **Every fixture must include at least one concrete stat** (league position, W-D-L, goals, form run). Use the league table data from the data file.
+- [ ] **Flag split decisions**: If sources are evenly split, flag for the Split Decisions section.
+- [ ] **Identify value picks**: Fixtures qualifying for Value Picks must meet **both**: (a) at least 3 sources provided a prediction, and (b) confidence tier is High or Moderate. Additionally, note any fixtures with a positive edge vs. odds (from the comparison above).
+
+### xG analysis (if data available)
+
+Skip this subsection if the data file has no xG data.
+
+- [ ] **Check for regression risks**: For each fixture, review both teams' overperformance flags from the data file.
+  - If a team is flagged for **attacking regression** (GF - xG >= 3): their goal output may be unsustainable. Note this if the consensus backs them to win or if Over 2.5 is the goals consensus.
+  - If a team is flagged for **defensive regression** (xGA - GA <= -3): they may concede more going forward. Note this if the consensus backs a clean sheet or low-scoring game.
+- [ ] **Cross-check xG vs. consensus**: Does the xGD ranking support the predicted outcome? If xG data contradicts the consensus (e.g., consensus says Home Win but the away team has a much stronger xGD), note this as a reason for caution.
+- [ ] **Cross-check xG vs. market odds**: If xGD suggests a team is stronger than the market prices them (or weaker), note the divergence. This can reinforce or weaken a value bet flag.
+- [ ] **Integrate into reasoning**: Where xG provides a clear signal (supports or contradicts the consensus), weave it into the fixture's key reasoning. Do not force xG commentary onto every fixture -- only include it where the signal is meaningful (overperformance >= 3 goals, or xGD contradicts the consensus).
 
 ---
 
 ## Phase 4: Write Report
 
 - [ ] Copy the structure from `templates/matchweek-report-template.md`.
-- [ ] Fill in the **Header** with gameweek number, dates, and report generation date.
-- [ ] Write the **Matchweek Overview** (2-3 sentences on key storylines: title race, relegation battles, derbies, standout fixtures).
-- [ ] Fill in the **Predictions Table** with all fixtures, their consensus, confidence tier, and X/Y fraction.
+- [ ] Fill in the **Header** with gameweek number, dates, report generation date, and sources consulted.
+- [ ] Write the **Matchweek Overview** (2-3 sentences on key storylines).
+- [ ] Fill in the **Predictions Table** with all fixtures, consensus, confidence tier, source fraction, average probability, and market implied probability.
 - [ ] Write the **Detailed Match Predictions** for every fixture:
-  - Consensus prediction, confidence tier, and X/Y fraction
-  - Source breakdown table (only include sources that had predictions -- no placeholder rows for missing sources)
-  - Over/Under 2.5 and BTTS consensus
-  - Key reasoning with specific stats (2-3 sentences)
-- [ ] Write the **Value Picks** section (1-3 highest-confidence predictions with brief explanation). Minimum 3 sources must have covered the fixture to qualify.
+  - Consensus prediction, confidence tier, and source fraction
+  - Source breakdown table (only sources with data; include O/U 2.5 and BTTS columns)
+  - Market odds comparison line (consensus probability vs. implied probability, edge)
+  - Goals market summary
+  - xG context line (optional -- include when xG diverges meaningfully from actual results or contradicts the consensus; omit when xG simply confirms what other data already shows)
+  - Key reasoning with specific stats
+- [ ] Write the **Value Picks** section (1-3 highest-confidence predictions with strong edge vs. market).
 - [ ] Write the **Split Decisions** section (fixtures where sources disagree, with analysis of why).
-- [ ] Write the **Accumulator Ideas** section (2-3 suggested accumulators from highest-confidence picks, with a clear disclaimer).
-- [ ] List all **Sources** consulted with links.
+- [ ] Write the **Accumulator Ideas** section (2-3 suggested accumulators with disclaimer).
+- [ ] List all **Sources** consulted with links and coverage notes.
 - [ ] Include the **Disclaimer** at the bottom.
 
 ### Quality checks
@@ -118,34 +153,36 @@ For each fixture in the matchweek:
 - [ ] Every fixture in the matchweek is covered.
 - [ ] Every prediction is attributed to a named source.
 - [ ] No predictions are fabricated.
-- [ ] Reasoning is specific: every fixture includes at least one concrete stat (position, W-D-L, goals, form run).
-- [ ] Confidence tiers (High / Moderate / Low) are assigned correctly per the definitions.
-- [ ] Over/Under 2.5 and BTTS data is included where sources provide it.
-- [ ] Source breakdown tables only list sources that had predictions (no empty placeholder rows).
-- [ ] The report reads well in English, with professional tone.
+- [ ] Reasoning is specific: every fixture includes at least one concrete stat.
+- [ ] Confidence tiers are assigned correctly per definitions.
+- [ ] Market odds comparison is included for each fixture.
+- [ ] xG context is included for fixtures where regression flags or xG-consensus contradictions exist.
+- [ ] Source breakdown tables only list sources with predictions (no empty rows).
+- [ ] Professional, analytical tone throughout.
 
 ---
 
 ## Phase 5: Publish
 
-- [ ] Save the report as `reports/GWxx-YYYY-MM-DD-predictions.md` where `xx` is the zero-padded gameweek number and `YYYY-MM-DD` is the primary match date.
-- [ ] Update `reports/index.md` with a new row for this report (date, gameweek, link, key themes).
+- [ ] Save the report as `reports/GWxx-YYYY-MM-DD-predictions.md`.
+- [ ] Update `reports/index.md` with a new row for this report.
 - [ ] Confirm the report file was saved successfully.
 
 ---
 
 ## Phase 6: Post-Matchweek Accuracy Review
 
-Run this phase **after the matchweek results are in** (typically Monday/Tuesday after the weekend fixtures). The user should prompt: "Update accuracy for Gameweek XX."
+Run this phase **after the matchweek results are in** (typically Monday/Tuesday). The user should prompt: "Update accuracy for Gameweek XX."
 
-- [ ] Fetch actual results for all fixtures in the matchweek from BBC Sport or WebSearch.
+- [ ] Fetch actual results for all fixtures from BBC Sport or WebSearch.
 - [ ] For each fixture, compare:
   - Consensus prediction vs. actual result (Correct / Incorrect)
   - Each individual source's prediction vs. actual result
-- [ ] Update `reports/accuracy-log.md` with the results for this gameweek.
-- [ ] Calculate and record:
-  - Consensus accuracy for the gameweek (e.g., "7/10 correct")
-  - Per-source accuracy for the gameweek
-  - Running cumulative accuracy for each source across all tracked gameweeks
-- [ ] Update `reports/index.md` to add accuracy % for the gameweek report.
+  - Market favourite (from odds) vs. actual result
+- [ ] Update `reports/accuracy-log.md`:
+  - Add a new Gameweek Results block with per-fixture, per-source results.
+  - Update the Cumulative Source Accuracy table.
+  - Update the Confidence Tier Accuracy table.
+  - **Recalculate source weights** if 5+ gameweeks of data exist (see formula in accuracy-log.md).
+- [ ] Update `reports/index.md` to add accuracy % for the gameweek.
 - [ ] If a source's cumulative accuracy falls below 40% over 5+ gameweeks, flag it for review in `knowledge/sources.md`.

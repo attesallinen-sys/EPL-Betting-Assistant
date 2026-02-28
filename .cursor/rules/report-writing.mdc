@@ -33,12 +33,12 @@ alwaysApply: false
 | Section | Target Length | Requirements |
 |---------|-------------|--------------|
 | Matchweek Overview | 2-3 sentences | Key storylines: title race, relegation, derbies, notable absences |
-| Predictions at a Glance | Table | All fixtures with consensus, confidence tier, source fraction, and avg probability |
-| Detailed Match Predictions | 80-150 words per fixture | Consensus, confidence tier, source breakdown table (only sources with data), O/U and BTTS consensus, and reasoning with specific stats |
-| Value Picks | 50-100 words per pick | 1-3 highest-confidence predictions; requires 3+ source coverage AND High/Moderate tier |
-| Split Decisions | 50-100 words per fixture | Fixtures with no clear consensus; explain the disagreement |
+| Predictions at a Glance | Table | All fixtures with consensus, confidence tier, source fraction, avg probability, market implied%, and edge |
+| Detailed Match Predictions | 80-150 words per fixture | Consensus, confidence tier, source breakdown table (only sources with data), market odds comparison, O/U and BTTS consensus, optional xG context line (when signal is meaningful), and reasoning with specific stats |
+| Value Picks | 50-100 words per pick | 1-3 highest-confidence predictions; requires 3+ source coverage AND High/Moderate tier; note edge vs. market |
+| Split Decisions | 50-100 words per fixture | Fixtures with no clear consensus; explain disagreement; note what market odds imply |
 | Accumulator Ideas | 2-3 accumulators | Illustrative combinations from highest-confidence picks; with disclaimer |
-| Sources | List | All sources consulted with links and coverage notes; note any unavailable sources |
+| Sources | List | All sources consulted with links and coverage notes; note any unavailable sources; list odds source and xG data source |
 
 ## Confidence Tiers
 
@@ -53,30 +53,59 @@ Every fixture must be assigned a confidence tier. These tiers appear in the Pred
 - Confidence tiers must be calculated strictly from the criteria above -- do not subjectively upgrade or downgrade.
 - Value Picks require **both** (a) at least 3 sources covering the fixture AND (b) High or Moderate confidence tier. If no fixture qualifies, say so explicitly rather than lowering the bar.
 
+## Market Odds Comparison
+
+Every fixture in the Detailed Match Predictions section must include a market odds comparison:
+
+- **Market odds line**: Show the decimal odds and fair implied probabilities for Home/Draw/Away.
+- **Edge calculation**: `Edge = Average consensus probability - Fair implied probability` for the consensus outcome.
+- **Interpretation**: A positive edge (5%+) means prediction sources see more value than the market -- this strengthens the pick. A negative edge means the market is less confident than the sources -- proceed with caution.
+- **In the Predictions at a Glance table**: Include the market implied probability for the consensus outcome and the edge as columns.
+- **In Split Decisions**: Note which outcome the market favours and whether it aligns with one side of the split.
+- **In Value Picks**: Highlight the edge alongside confidence tier. Picks with both High/Moderate confidence AND positive edge are the strongest.
+
+## Weighted Consensus
+
+When source weights are available (from `reports/accuracy-log.md`):
+
+- Use weighted scores to determine consensus, not just raw vote counts.
+- Still report the unweighted fraction (e.g., "3/5 sources") for transparency.
+- If the weighted consensus differs from the unweighted majority, note this explicitly in the fixture analysis.
+
+When no weights are available yet (fewer than 5 gameweeks tracked), use equal weights (1.0) for all sources.
+
 ## Reasoning Quality
 
 - Reasoning for each fixture must be **specific**, not generic.
 - Good: "Liverpool's unbeaten home run of 12 matches and Salah's 15-goal tally give them a significant edge against a West Ham side that has lost 4 of their last 5 away fixtures."
 - Bad: "Liverpool are expected to win because they are a strong team playing at home."
-- **Every fixture's reasoning must include at least one concrete stat**: league position, W-D-L record (home or away), goals scored/conceded, specific form run (e.g., "unbeaten in 8"), or head-to-head record. Vague references to "strong form" or "poor record" without numbers are not acceptable.
-- Reference actual factors: form (last 5-6 results), injuries, head-to-head record, home/away splits, league position, motivation.
-- If a source mentions specific reasoning, include it. If no reasoning is provided by sources, infer from publicly known context (form, table position) but state this clearly.
+- **Every fixture's reasoning must include at least one concrete stat**: league position, W-D-L record (home or away), goals scored/conceded, specific form run, or head-to-head record.
+- Reference actual factors: form, injuries, head-to-head, home/away splits, league position, motivation.
+- **When market odds diverge from consensus**: mention it in the reasoning (e.g., "The market prices this tighter than the sources suggest, implying more draw/upset risk").
+- **When xG data is available**: include an xG context line for fixtures where the data provides a meaningful signal. Specifically:
+  - Flag teams with attacking overperformance of 3+ goals (scoring above xG -- regression risk).
+  - Flag teams with defensive overperformance magnitude of 3+ goals (conceding fewer or more than xGA).
+  - Note when xGD contradicts the consensus outcome or diverges from what the league table position suggests.
+  - Do **not** force xG commentary onto every fixture. Only include it when the signal adds information beyond what the league table and form already convey.
+  - Good: "Brighton are overperforming their xG by 4.2 goals (xG 32.1, actual 36.3), suggesting some regression risk in their attacking output."
+  - Bad: "Brighton have an xG of 32.1 this season." (raw number without interpretation adds nothing)
 
 ## Goals Market Data
 
 - The source breakdown table for each fixture must include Over/Under 2.5 and BTTS columns when sources provide this data.
-- Below the table, include a one-line "Goals market" summary showing the O/U and BTTS consensus (e.g., "3/4 sources say Over 2.5 | 2/4 sources say BTTS Yes").
+- Below the table, include a one-line "Goals market" summary (e.g., "3/4 sources say Over 2.5 | 2/4 sources say BTTS Yes").
 - Omit the goals market line only if no sources provided O/U or BTTS data for the fixture.
 
 ## Source Breakdown Tables
 
 - Only include rows for sources that actually had predictions for the fixture.
-- Do **not** include placeholder rows with "--" across all columns for sources that had no data. This clutters the table and gives a false impression of coverage.
+- Do **not** include placeholder rows with "--" across all columns for sources that had no data.
 
 ## Data and Citations
 
 - Every prediction must be attributed to a named source.
 - The Sources section at the bottom should list all sources consulted with URLs.
+- List the odds source and xG data source separately at the bottom of the Sources section.
 - If a source was unavailable, note it: "**Note**: [Source] had not published predictions at the time of report generation."
 
 ## Disclaimer
@@ -90,9 +119,11 @@ Before finalizing a report, verify:
 - [ ] Every prediction is attributed to a specific source
 - [ ] No predictions are fabricated
 - [ ] Reasoning is specific and references actual factors (not generic)
-- [ ] The Predictions at a Glance table is complete
-- [ ] Value Picks section highlights the strongest consensus picks
-- [ ] Split Decisions section covers any fixtures with no clear consensus
-- [ ] All sources are listed with links
+- [ ] The Predictions at a Glance table is complete (including Market Impl% and Edge columns)
+- [ ] Market odds comparison is included for each fixture in the detailed section
+- [ ] Value Picks section highlights picks with strong consensus AND positive market edge
+- [ ] Split Decisions section covers any fixtures with no clear consensus, with market context
+- [ ] xG context is included for fixtures with regression flags or xG-consensus contradictions (when xG data is available)
+- [ ] All sources (prediction + odds + xG) are listed with links
 - [ ] The disclaimer is present at the bottom
 - [ ] Professional, analytical tone throughout
