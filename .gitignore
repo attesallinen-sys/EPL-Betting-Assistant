@@ -1,0 +1,14 @@
+# Data
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# Plan files
+.cursor/plans/

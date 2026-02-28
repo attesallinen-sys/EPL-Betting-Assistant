@@ -1,0 +1,39 @@
+---
+description: Research workflow for gathering EPL match predictions from multiple sources
+alwaysApply: true
+---
+
+# Research Workflow
+
+## Order of Operations
+
+1. **Load sources**: Read `knowledge/sources.md` to get the full list of prediction sites and URLs.
+2. **Get fixtures**: Fetch the upcoming matchweek fixture list before consulting any prediction sources. Use BBC Sport, WebSearch, or premierleague.com as described in `knowledge/sources.md`.
+3. **Prioritize**: Start with P1 (primary) prediction sources, then P2 (secondary).
+4. **Fetch predictions source by source**: For each source:
+   - First try `WebFetch` on the source's direct URL.
+   - If that fails or returns incomplete data, use `WebSearch` with the source-specific query templates from `knowledge/sources.md`.
+   - Extract: predicted outcome (Home/Draw/Away), probabilities if provided, predicted score if available, and any reasoning or key factors mentioned.
+5. **Record everything**: For each fixture, maintain a working tally of predictions across sources. Note which sources were consulted and what each one predicted.
+6. **Handle gaps honestly**: If a source has not posted predictions or is unreachable, note it. Never fabricate predictions to fill gaps.
+
+## Search Strategy
+
+- Use source-specific URLs first (more reliable than search), then fall back to `WebSearch`.
+- When using WebSearch, prefer `site:` queries to target specific prediction sites.
+- For fixture data, search for "Premier League fixtures gameweek [number]" or "Premier League fixtures [date]".
+- If predictions for a specific fixture are missing from a source, try searching for "[home team] vs [away team] prediction [source name]".
+
+## Fetching Best Practices
+
+- When using `WebFetch`, prediction sites may be JavaScript-heavy. If the fetch returns minimal content, fall back to `WebSearch` for that source.
+- Process one source at a time to keep the data organized.
+- After fetching from each source, immediately record the extracted predictions before moving to the next source.
+
+## Handling Limitations
+
+- If a prediction source has not yet posted predictions for the matchweek, note it and exclude it from the consensus calculation. Do not hold up the report.
+- If a source is unavailable or returns errors, skip it and note the issue in the report's Sources section.
+- If fewer than 3 sources have predictions available, note this prominently in the report and recommend re-running the agent closer to match day.
+- Never guess or fabricate predictions to fill gaps. A report with "3/4 sources" is better than one with made-up data.
+- If a fixture has been postponed or rescheduled, note it in the report and exclude it from predictions.
