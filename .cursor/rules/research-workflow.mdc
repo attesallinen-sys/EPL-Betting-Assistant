@@ -9,13 +9,13 @@ This project uses a two-agent pipeline. Read `AGENTS.md` for the full workflow o
 
 ## Agent 1: Data Collection
 
-Agent 1 follows `tasks/fetch-matchweek-data.md`. Its job is to gather objective data:
+Agent 1 follows `tasks/fetch-matchweek-data.md`. Its job is to gather objective data. Phases 1-3 are independent and should run in parallel where possible.
 
 1. **Load sources**: Read `knowledge/sources.md` for fixture sources, league table sources, xG sources, and odds sources.
-2. **Get fixtures**: Fetch the matchweek fixture list. Use BBC Sport, WebSearch, or premierleague.com.
-3. **Get league context**: Fetch current league table and form data. Record league position, points, home/away W-D-L, goals scored/conceded for each team.
-4. **Get xG data**: Fetch expected goals data from FBref or Understat (via `WebSearch` -- direct fetch usually fails). Record xG, xGA, xGD per team. Calculate overperformance vs. actual goals and flag regression candidates. See "xG Data Sources" in `knowledge/sources.md`.
-5. **Get bookmaker odds**: Fetch odds from the sources listed in the "Odds Sources" section of `knowledge/sources.md`. Convert to implied probabilities (removing overround).
+2. **Get fixtures**: Fetch the matchweek fixture list. Use `WebSearch` first (most reliable), then BBC Sport or premierleague.com as fallbacks.
+3. **Get league context**: Fetch current league table, home/away splits, and form data. Use SoccerStats.com as the primary source, then `WebSearch` or BBC Sport as fallbacks. Record league position, games played, points, home/away W-D-L, goals scored/conceded for each team.
+4. **Get xG data**: Fetch expected goals data via `WebSearch` (StatMuse, FBref, or Understat -- never attempt direct `WebFetch` on these sites). Record xG, xGA, xGD per team with match counts. Normalize xG to match the league table's games played before calculating overperformance. Flag regression candidates at 5+ goals divergence. See "xG Data Sources" in `knowledge/sources.md`.
+5. **Get bookmaker odds**: Fetch fair probabilities from Gambletron2000.com (primary), or Dimers.com / RotoWire as secondaries. Forebet and OddsPortal are fallbacks only. See "Odds Sources" in `knowledge/sources.md`.
 6. **Save data file**: Output `data/GWxx-matchweek-data.md` using the template at `templates/matchweek-data-template.md`.
 
 ## Agent 2: Predictions & Report
@@ -38,9 +38,10 @@ Agent 2 follows `tasks/matchweek-predictions.md`. Its job is to gather predictio
 
 - Use source-specific URLs first (more reliable than search), then fall back to `WebSearch`.
 - When using WebSearch, prefer `site:` queries to target specific prediction sites.
-- For fixture data (Agent 1), search for "Premier League fixtures gameweek [number]" or "Premier League fixtures [date]".
-- For odds data (Agent 1), try Forebet's odds column first, then OddsPortal, then WebSearch.
-- For xG data (Agent 1), `WebSearch` is the reliable method. FBref and Understat pages are JavaScript-heavy and almost always fail with `WebFetch`. Use `site:fbref.com` or `site:understat.com` queries, or general queries like "Premier League xG table 2025-2026".
+- For fixture data (Agent 1), use `WebSearch` as the primary method: "Premier League fixtures gameweek [number] [date]". BBC Sport and premierleague.com are JavaScript-heavy and unreliable for team names.
+- For league table data (Agent 1), use `WebFetch` on SoccerStats.com as the primary source. It provides table, home/away splits, and form on one page.
+- For odds data (Agent 1), use Gambletron2000.com as the primary source (fair probabilities per fixture). Dimers.com and RotoWire are secondaries. Forebet and OddsPortal frequently time out -- use only as fallbacks.
+- For xG data (Agent 1), `WebSearch` is the only reliable method. Do NOT attempt `WebFetch` on FBref or Understat (they always fail). Use StatMuse queries, `site:fbref.com` queries, or general queries like "Premier League xG table 2025-2026".
 - If predictions for a specific fixture are missing from a source, try "[home team] vs [away team] prediction [source name]".
 
 ## Fetching Best Practices
@@ -48,6 +49,15 @@ Agent 2 follows `tasks/matchweek-predictions.md`. Its job is to gather predictio
 - Prediction sites may be JavaScript-heavy. If `WebFetch` returns minimal content, fall back to `WebSearch`.
 - Process one source at a time to keep data organized.
 - After fetching from each source, immediately record the extracted data before moving to the next.
+
+## Accuracy Review (Phase 6)
+
+After results are in, follow Phase 6 of `tasks/matchweek-predictions.md`. Key points:
+
+- **Verify scores from two sources**: Never trust a single search result for scores. Cross-reference BBC Sport results against ESPN or another source. See "Results Sources" in `knowledge/sources.md`.
+- **Reconcile sources before recording**: Check which sources the report actually used against the accuracy log tables. Add any missing sources to the log before recording results.
+- **Use the Prediction Summary table**: If the report includes the structured Prediction Summary table, use it to extract predictions. This is faster and less error-prone than parsing narrative sections.
+- **Handle missing market data**: If Agent 1 was not run (no data file), mark market columns as N/A rather than skipping them.
 
 ## Handling Limitations
 

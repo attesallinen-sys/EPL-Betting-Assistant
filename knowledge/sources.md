@@ -133,34 +133,64 @@ This file lists the curated free prediction sources the agent should consult for
 
 ## Odds Sources
 
-These sources are used by **Agent 1** to fetch bookmaker odds for each fixture. Odds are converted to implied probabilities and included in the data file for Agent 2 to compare against prediction source consensus.
+These sources are used by **Agent 1** to fetch bookmaker odds for each fixture. Odds are converted to fair (vig-removed) implied probabilities and included in the data file for Agent 2 to compare against prediction source consensus.
 
-### Forebet (Odds Column)
+### Gambletron2000.com (Primary)
+
+- **URL**: `https://www.gambletron2000.com/premier-league/`
+- **What it provides**: Fair (vig-removed) win probabilities for every upcoming EPL fixture. Each fixture has its own page showing Home%, Draw%, and Away% summing to 100%.
+- **How to fetch**: `WebFetch` on individual fixture pages. URLs follow the pattern `gambletron2000.com/premier-league/[id]/[home]-vs-[away]`. Find fixture links from the main Premier League page or via `WebSearch` with query: `site:gambletron2000.com [home team] vs [away team]`.
+- **Data to extract per fixture**: Home/Draw/Away fair probabilities (already vig-removed).
+- **Limitations**: Provides probabilities only, not decimal odds. To derive decimal odds, apply a ~5% overround: `decimal_odds = 1 / (fair_probability * 1.05)`.
+- **Added**: GW29 (2026-03-02). Proved reliable across all 10 fixtures.
+
+### Dimers.com (Secondary)
+
+- **URL**: `https://www.dimers.com/bet-hub/epl/schedule`
+- **What it provides**: Computer-model probabilities based on 10,000 simulations per match. Also shows actual bookmaker moneyline odds (American format) and projected correct scores.
+- **How to fetch**: `WebFetch` on individual fixture pages. URLs follow the pattern `dimers.com/bet-hub/epl/schedule/[season]_[gw]_[away]_[home]`. Use `WebSearch` with query: `site:dimers.com [home team] vs [away team] prediction [date]` to find specific fixtures.
+- **Data to extract per fixture**: Home/Draw/Away win probabilities and actual bookmaker odds.
+- **Limitations**: May time out on some fetches. American odds format requires conversion to decimal.
+- **Added**: GW29 (2026-03-02).
+
+### RotoWire (Secondary)
+
+- **URL**: `https://www.rotowire.com/betting/soccer/`
+- **What it provides**: DraftKings odds with vig-removed probabilities for each fixture. Also includes lineups and injury data.
+- **How to fetch**: Use `WebSearch` with query: `site:rotowire.com [home team] vs [away team] odds [date]` to find the fixture page, then `WebFetch`.
+- **Data to extract per fixture**: Moneyline odds (American format) and vig-removed probabilities.
+- **Limitations**: American odds format. Individual fixture pages may be JavaScript-heavy.
+- **Added**: GW29 (2026-03-02).
+
+### Forebet (Odds Column) -- Fallback
 
 - **URL**: https://www.forebet.com/en/football-tips-and-predictions-for-england/premier-league
-- **What it provides**: Alongside predictions, Forebet displays average bookmaker odds for each fixture (Home/Draw/Away decimal odds).
-- **How to fetch**: When Agent 1 fetches the Forebet page for predictions context, extract the odds column. Look for decimal odds (e.g., 1.85 / 3.50 / 4.20).
-- **Limitations**: Odds may reflect an average across bookmakers rather than a single book. Still useful as a market benchmark.
+- **What it provides**: Average bookmaker odds for each fixture (Home/Draw/Away decimal odds) alongside predictions.
+- **How to fetch**: `WebFetch` on the URL above. Extract the odds column. Look for decimal odds (e.g., 1.85 / 3.50 / 4.20).
+- **Limitations**: Page frequently times out due to JavaScript rendering. Odds may reflect an average across bookmakers. Use only as a fallback if Gambletron and Dimers both fail.
 
-### OddsPortal
+### OddsPortal -- Fallback
 
 - **URL**: https://www.oddsportal.com/football/england/premier-league/
-- **What it provides**: Comprehensive odds comparison from multiple bookmakers for each fixture. Shows opening and closing odds.
-- **How to fetch**: Use `WebFetch` on the URL above. If the page is JavaScript-heavy and returns incomplete data, use `WebSearch` with query: `site:oddsportal.com premier league odds [date]`.
-- **Limitations**: JavaScript-heavy site; WebFetch may fail. Fall back to search.
+- **What it provides**: Comprehensive odds comparison from multiple bookmakers.
+- **How to fetch**: `WebFetch` or `WebSearch` with query: `site:oddsportal.com premier league odds [date]`.
+- **Limitations**: JavaScript-heavy; WebFetch almost always fails. Use only as a last resort.
 
 ### WebSearch Fallback
 
 - **Query**: `Premier League gameweek [number] betting odds [date]`
 - **What it provides**: Search results often include odds snippets from comparison sites, bookmaker pages, and news articles.
-- **When to use**: If both Forebet odds and OddsPortal fail to provide complete data.
+- **When to use**: If Gambletron, Dimers, and RotoWire all fail to provide complete data.
 
-### Converting Odds to Implied Probabilities
+### Converting Odds to Fair Probabilities
 
-1. **Raw implied probability**: `1 / decimal_odds` (e.g., odds of 2.50 → 40%)
-2. **Calculate overround**: Sum all three implied probabilities. The amount over 100% is the bookmaker's margin (overround). Typical EPL overround is 3-8%.
-3. **Fair (normalized) probability**: `raw_implied / sum_of_all_implied`. This removes the overround and gives probabilities summing to 100%.
-4. Record both raw and fair probabilities in the data file. Use fair probabilities for comparison with source consensus.
+When a source provides decimal odds rather than fair probabilities:
+
+1. **Raw implied probability**: `1 / decimal_odds` (e.g., odds of 2.50 → 40%).
+2. **Calculate overround**: Sum all three raw implied probabilities. The amount over 100% is the bookmaker's margin. Typical EPL overround is 3-8%.
+3. **Fair probability**: `raw_implied / sum_of_all_implied`. This removes the overround and gives probabilities summing to 100%.
+
+Record fair probabilities in the data file. Note the overround percentage in the Odds Notes section.
 
 ---
 
@@ -174,33 +204,37 @@ These sources are used by **Agent 1** to fetch expected goals (xG) data for each
 - **xGA (Expected Goals Against)**: The cumulative quality of chances a team has conceded.
 - **xGD (xG Difference)**: `xG - xGA`. Positive = creating better chances than conceding. The best proxy for underlying team quality.
 - **Overperformance (Goals - xG)**: When a team scores significantly more than their xG, they are likely benefiting from finishing luck and may regress. When they score less, they may be due for improvement.
-- A divergence of **3+ goals** between actual and expected over a season is notable. A divergence of **5+** is a strong regression signal.
+- A divergence of **5+ goals** between actual and expected over a season is a strong regression signal worth flagging.
 
-### FBref (Primary)
+### StatMuse (Primary)
 
-- **URL**: `https://fbref.com/en/comps/9/Premier-League-Stats`
-- **What it provides**: Comprehensive squad-level xG, xGA, and xGD for the current Premier League season. Also provides per-90-minute rates and non-penalty xG (npxG).
-- **How to fetch**: `WebFetch` on the URL above will likely time out (JavaScript-heavy). Fall back to `WebSearch` with query: `site:fbref.com premier league 2025-2026 expected goals stats`. Search results often include squad-level xG summaries.
+- **URL**: `https://www.statmuse.com/fc/ask`
+- **What it provides**: Structured xG and xGA data per team for the current season, with explicit match counts. Aggregates FBref/Opta data.
+- **How to fetch**: Use `WebSearch` with query: `Premier League 2025-2026 xG xGA all teams season stats table expected goals against`. StatMuse results typically appear in search summaries with per-team xG, xGA, and match counts.
 - **Data to extract per team**:
   - Season xG (total expected goals)
   - Season xGA (total expected goals against)
-  - xGD (xG difference)
-- **Limitations**: Direct page fetch almost always fails. Rely on `WebSearch` to surface xG data from FBref pages or summaries.
+  - Number of matches covered (critical for normalization -- see below)
+- **Limitations**: Data may lag the league table by 2-3 matches. Always record the match count and normalize before comparing to actual goals.
+- **Added**: GW29 (2026-03-02). Returned clean data for all 20 teams.
 
-### Understat (Secondary)
+### FBref (via WebSearch)
+
+- **URL**: `https://fbref.com/en/comps/9/Premier-League-Stats`
+- **What it provides**: Comprehensive squad-level xG, xGA, and xGD. Also provides per-90-minute rates and non-penalty xG (npxG).
+- **How to fetch**: Do NOT attempt `WebFetch` on FBref -- it is JavaScript-heavy and will time out. Go directly to `WebSearch` with query: `site:fbref.com premier league 2025-2026 expected goals stats`. Search results often include squad-level xG summaries.
+- **Limitations**: Direct page fetch always fails. Rely entirely on `WebSearch`.
+
+### Understat (via WebSearch)
 
 - **URL**: `https://understat.com/league/EPL`
-- **What it provides**: xG table for the current EPL season with xG, xGA, xGD, npxG, npxGA, and expected points (xPTS) per team. Also provides per-match xG data.
-- **How to fetch**: `WebFetch` on the URL above will likely return minimal data (JavaScript-rendered). Fall back to `WebSearch` with query: `site:understat.com EPL xG table 2025-2026`.
-- **Data to extract per team**:
-  - Season xG and xGA
-  - xGD
-  - npxGD (non-penalty xG difference, if available)
-- **Limitations**: Almost entirely JavaScript-rendered. `WebFetch` returns only page scaffolding. `WebSearch` is the reliable method.
+- **What it provides**: xG table with xG, xGA, xGD, npxG, npxGA, and expected points (xPTS) per team.
+- **How to fetch**: Do NOT attempt `WebFetch` on Understat -- it is JavaScript-rendered and returns only page scaffolding. Go directly to `WebSearch` with query: `site:understat.com EPL xG table 2025-2026`.
+- **Limitations**: Direct page fetch always fails. Rely entirely on `WebSearch`.
 
-### WebSearch Fallback
+### General WebSearch Fallback
 
-If both FBref and Understat fail via direct fetch and site-specific search:
+If StatMuse, FBref search, and Understat search all fail:
 
 - **Query**: `Premier League xG table 2025-2026 season team stats`
 - **Alternative query**: `Premier League expected goals standings [month] [year]`
@@ -209,11 +243,41 @@ If both FBref and Understat fail via direct fetch and site-specific search:
 
 ### Calculating Overperformance
 
-After fetching xG data, calculate the following for each team in the matchweek:
+**Important**: xG data often covers fewer matches than the league table (e.g., xG from 26 matches vs. 28 in the table). Always normalize before comparing.
 
-1. **Attacking overperformance**: `Actual Goals Scored - xG`. Positive = scoring above expected (luck/hot finishing). Negative = underperforming chances.
-2. **Defensive overperformance**: `xGA - Actual Goals Conceded`. Positive = conceding fewer than expected (strong defending or keeper form). Negative = conceding more than expected.
-3. Flag any team with an attacking or defensive overperformance magnitude of **3+ goals** as a regression candidate.
+After fetching xG data:
+
+1. **Record the xG match count** (e.g., 26 matches) and the league table match count (e.g., 28 matches).
+2. **If match counts differ**, scale xG to match the league table: `adjusted_xG = xG * (P_table / P_xg)`. Do the same for xGA.
+3. **Attacking overperformance**: `Actual Goals Scored - adjusted_xG`. Positive = scoring above expected. Negative = underperforming.
+4. **Defensive overperformance**: `adjusted_xGA - Actual Goals Conceded`. Positive = conceding fewer than expected. Negative = conceding more.
+5. Flag any team with an attacking or defensive overperformance magnitude of **5+ goals** as a regression candidate.
+
+---
+
+## Results Sources
+
+These sources are used during the **Phase 6 accuracy review** to fetch actual match results after the gameweek is complete. Always cross-reference scores from at least two sources to guard against search snippet errors.
+
+### BBC Sport (Primary)
+
+- **URL**: `https://www.bbc.co.uk/sport/football/premier-league/scores-fixtures`
+- **What it provides**: All Premier League scores and fixtures, organised by date.
+- **How to fetch**: Use `WebSearch` with query: `BBC Sport Premier League results [matchweek date range]`. Direct `WebFetch` on the scores page may miss team names due to JavaScript rendering, so prefer search results that include score summaries.
+- **Limitations**: JavaScript-heavy page; search results are more reliable than direct fetch.
+
+### ESPN (Cross-reference)
+
+- **URL**: `https://www.espn.com/soccer/fixtures/_/league/eng.1`
+- **What it provides**: Match results with scores, goalscorers, and match report links.
+- **How to fetch**: Use `WebSearch` with query: `site:espn.com Premier League results [date]` or `WebFetch` on individual match report URLs (pattern: `espn.com/soccer/report/_/gameId/[id]`).
+- **Limitations**: Individual match pages are more reliable than the fixtures index.
+
+### WebSearch Fallback
+
+- **Query**: `"Premier League gameweek [XX] results all scores [matchweek date range]"`
+- **Alternative query**: `"Premier League results [date] scores fixtures"`
+- **When to use**: If BBC Sport and ESPN searches both return incomplete data. Target queries that return a single page listing all 10 results rather than assembling scores one match at a time.
 
 ---
 
@@ -243,19 +307,18 @@ After fetching xG data, calculate the following for each team in the matchweek:
 
 To get the upcoming matchweek fixture list, use one of these approaches (in order of preference):
 
-1. **BBC Sport**: `WebFetch` on `https://www.bbc.co.uk/sport/football/premier-league/scores-fixtures` -- provides a clean list of upcoming fixtures with dates and times.
-2. **WebSearch**: Search for `Premier League fixtures this weekend [date]` to find the fixture list.
-3. **premierleague.com**: `WebFetch` on `https://www.premierleague.com/fixtures` -- official source but may be JavaScript-heavy.
+1. **WebSearch**: Search for `Premier League fixtures gameweek [number] [date]` to find the fixture list. This is the most reliable method -- search results typically include all fixtures with dates and kickoff times.
+2. **BBC Sport**: `WebFetch` on `https://www.bbc.co.uk/sport/football/premier-league/scores-fixtures` -- sometimes returns date headers but no team names due to JavaScript rendering. Use as a fallback only.
+3. **premierleague.com**: `WebFetch` on `https://www.premierleague.com/fixtures` -- official source but JavaScript-heavy and often returns minimal content.
 
 ## League Table and Form Data
 
-Before writing reasoning for each fixture, fetch current standings and form:
+Fetch current standings, home/away splits, and form:
 
-1. **BBC Sport**: `WebFetch` on `https://www.bbc.co.uk/sport/football/premier-league/table` -- current league table with points, W-D-L, GF, GA, GD.
-2. **WebSearch**: Search for `Premier League table standings [date]` or `Premier League form guide [date]`.
-3. **premierleague.com**: `WebFetch` on `https://www.premierleague.com/tables` for official standings.
-
-Use this data to support reasoning with specific stats (league position, points, home/away W-D-L, goals scored/conceded).
+1. **SoccerStats.com**: `WebFetch` on `https://www.soccerstats.com/homeaway.asp?league=england` -- single page with the full league table, home/away W-D-L breakdowns, form tables (last 8 matches), and offense/defense rankings. This is the most complete and reliable source for Agent 1.
+2. **WebSearch**: Search for `Premier League table standings [date]` to fill any gaps or cross-check team names against stats.
+3. **BBC Sport**: `WebFetch` on `https://www.bbc.co.uk/sport/football/premier-league/table` -- returns stats (points, W-D-L, GF, GA, GD) but team names are JavaScript-rendered and often missing. Use only as a fallback to verify numbers.
+4. **premierleague.com**: `WebFetch` on `https://www.premierleague.com/tables` -- JavaScript-heavy, rarely returns usable data.
 
 ---
 
@@ -264,6 +327,10 @@ Use this data to support reasoning with specific stats (league position, points,
 When a source's direct URL does not work or returns incomplete data, use these search queries:
 
 ```
+# Fixtures
+Premier League fixtures gameweek [number] [date]
+
+# Predictions
 site:forebet.com premier league predictions [date]
 site:predixsport.com premier league predictions
 site:bueon.com england premier league ai predictions
@@ -275,6 +342,20 @@ site:bettingpros.com premier league matchday [number] predictions [year]
 site:actionnetwork.com premier league best bets predictions picks [month] [year]
 premier league predictions gameweek [number] [year]
 premier league match predictions [home team] vs [away team]
+
+# Odds
+site:gambletron2000.com [home team] vs [away team]
+site:dimers.com [home team] vs [away team] prediction [date]
+site:rotowire.com [home team] vs [away team] odds [date]
+Premier League gameweek [number] betting odds [date]
+
+# Results (Phase 6 accuracy review)
+BBC Sport Premier League results [matchweek date range]
+site:espn.com Premier League results [date]
+Premier League gameweek [number] results all scores [date]
+
+# xG
+Premier League 2025-2026 xG xGA all teams season stats table expected goals against
 site:fbref.com premier league 2025-2026 expected goals stats
 site:understat.com EPL xG table 2025-2026
 Premier League xG table 2025-2026 season team stats

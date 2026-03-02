@@ -174,15 +174,40 @@ Skip this subsection if the data file has no xG data.
 
 Run this phase **after the matchweek results are in** (typically Monday/Tuesday). The user should prompt: "Update accuracy for Gameweek XX."
 
-- [ ] Fetch actual results for all fixtures from BBC Sport or WebSearch.
+### Step 1: Fetch and verify actual results
+
+- [ ] Fetch results for all fixtures from a primary source. Use `WebSearch` targeting an all-in-one results page rather than assembling scores from individual searches. Recommended query: `"Premier League results gameweek [XX] [matchweek date range] scores"`. See the Results Sources section in `knowledge/sources.md` for reliable sources.
+- [ ] **Cross-reference every score** against a second source (e.g., if primary was BBC Sport, check ESPN or Sky Sports). This catches search snippet errors.
+- [ ] If any score conflicts between sources, fetch a third source to break the tie before proceeding.
+
+### Step 2: Load market data (if available)
+
+- [ ] Check if `data/GWxx-matchweek-data.md` exists.
+  - **If yes**: Load bookmaker odds / fair implied probabilities. Determine the market favourite for each fixture (the outcome with the highest implied probability).
+  - **If no**: Mark all Market Fav / Market Correct columns as "N/A". Note in observations that market comparison requires Agent 1 to have been run before the matchweek. Optionally attempt to fetch closing odds retroactively via `WebSearch` (e.g., `"Premier League gameweek [XX] closing odds [date]"`) -- but treat retroactive odds as best-effort and label them accordingly.
+
+### Step 3: Reconcile sources
+
+- [ ] Read the Sources section of `reports/GWxx-YYYY-MM-DD-predictions.md` to identify which sources were actually used in the report.
+- [ ] Compare that list against the Source Weights and Cumulative Source Accuracy tables in `reports/accuracy-log.md`.
+- [ ] If any source in the report is missing from the accuracy log tables, add it to both the Source Weights table (with default weight 1.0) and the Cumulative Source Accuracy table before recording results.
+- [ ] Do not remove inactive sources from the tables (they retain historical data). Only record results for sources that were actually consulted.
+
+### Step 4: Compare predictions vs. results
+
+- [ ] Read the Prediction Summary table from the report (if present) to extract each source's prediction per fixture. If no summary table exists, extract predictions from the detailed match prediction sections.
 - [ ] For each fixture, compare:
   - Consensus prediction vs. actual result (Correct / Incorrect)
   - Each individual source's prediction vs. actual result
-  - Market favourite (from odds) vs. actual result
+  - Market favourite (from odds) vs. actual result (or N/A if no odds data)
+
+### Step 5: Update accuracy log
+
 - [ ] Update `reports/accuracy-log.md`:
   - Add a new Gameweek Results block with per-fixture, per-source results.
-  - Update the Cumulative Source Accuracy table.
+  - Update the Cumulative Source Accuracy table (add this gameweek's correct/total to the running totals).
   - Update the Confidence Tier Accuracy table.
+  - Update the Market vs. Consensus Comparison table.
   - **Recalculate source weights** if 5+ gameweeks of data exist (see formula in accuracy-log.md).
 - [ ] Update `reports/index.md` to add accuracy % for the gameweek.
 - [ ] If a source's cumulative accuracy falls below 40% over 5+ gameweeks, flag it for review in `knowledge/sources.md`.

@@ -113,6 +113,27 @@ Suggested accumulators built from the highest-confidence picks. These are illust
 
 ---
 
+## Prediction Summary
+
+<!-- Structured table for accuracy tracking. Include one column per source actually consulted this gameweek. Each cell shows the source's predicted outcome (Home Win / Draw / Away Win) or "--" if the source had no prediction for that fixture. This table is consumed by the Phase 6 accuracy review -- do not omit it. -->
+
+| # | Home | Away | Consensus | Confidence | Source1 | Source2 | Source3 | Source4 | Source5 |
+|---|------|------|-----------|------------|---------|---------|---------|---------|---------|
+| 1 | [Home] | [Away] | [Outcome] | [Tier] | [Pred] | [Pred] | -- | -- | -- |
+| 2 | | | | | | | | | |
+| 3 | | | | | | | | | |
+| 4 | | | | | | | | | |
+| 5 | | | | | | | | | |
+| 6 | | | | | | | | | |
+| 7 | | | | | | | | | |
+| 8 | | | | | | | | | |
+| 9 | | | | | | | | | |
+| 10 | | | | | | | | | |
+
+<!-- Replace Source1, Source2, etc. with actual source names in the header. Only include columns for sources consulted. -->
+
+---
+
 ## Sources
 
 <!-- List all sources consulted, with links. Only include sources that were actually attempted. -->

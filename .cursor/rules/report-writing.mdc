@@ -38,6 +38,7 @@ alwaysApply: false
 | Value Picks | 50-100 words per pick | 1-3 highest-confidence predictions; requires 3+ source coverage AND High/Moderate tier; note edge vs. market |
 | Split Decisions | 50-100 words per fixture | Fixtures with no clear consensus; explain disagreement; note what market odds imply |
 | Accumulator Ideas | 2-3 accumulators | Illustrative combinations from highest-confidence picks; with disclaimer |
+| Prediction Summary | Table | Flat table with one row per fixture, one column per source. Each cell = predicted outcome or "--". Used by Phase 6 accuracy review. Must not be omitted. |
 | Sources | List | All sources consulted with links and coverage notes; note any unavailable sources; list odds source and xG data source |
 
 ## Confidence Tiers
@@ -124,6 +125,7 @@ Before finalizing a report, verify:
 - [ ] Value Picks section highlights picks with strong consensus AND positive market edge
 - [ ] Split Decisions section covers any fixtures with no clear consensus, with market context
 - [ ] xG context is included for fixtures with regression flags or xG-consensus contradictions (when xG data is available)
+- [ ] The Prediction Summary table is present with one row per fixture and one column per source consulted
 - [ ] All sources (prediction + odds + xG) are listed with links
 - [ ] The disclaimer is present at the bottom
 - [ ] Professional, analytical tone throughout
