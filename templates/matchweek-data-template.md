@@ -104,3 +104,11 @@
 <!-- Record any issues: missing fixtures, unavailable data sources, stale odds, etc. -->
 
 - [Note any issues here]
+
+---
+
+## Agent Observations
+
+<!-- Note any issues encountered during this run: source failures, data gaps, process problems, or improvement ideas. These will be copied to feedback-log.md. -->
+
+- [None / observations listed here]

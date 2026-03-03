@@ -153,3 +153,11 @@ Suggested accumulators built from the highest-confidence picks. These are illust
 ---
 
 *Disclaimer: This report aggregates publicly available predictions for informational purposes only. It does not constitute betting advice and does not guarantee any outcomes. Past prediction accuracy does not predict future results. Please gamble responsibly.*
+
+---
+
+## Agent Observations
+
+<!-- Note any issues encountered during this run: source failures, data gaps, process problems, or improvement ideas. These will be copied to feedback-log.md. -->
+
+- [None / observations listed here]
