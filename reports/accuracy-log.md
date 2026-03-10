@@ -43,18 +43,18 @@ After 5+ gameweeks of data, recalculate weights using:
 
 | Source | Correct | Total | Accuracy | Gameweeks Tracked |
 |--------|---------|-------|----------|-------------------|
-| Forebet | 5 | 10 | 50% | 1 |
-| PredixSport | 7 | 10 | 70% | 1 |
-| Bueon | -- | -- | -- | 0 |
-| Sports Mole | -- | -- | -- | 0 |
+| Forebet | 6 | 18 | 33% | 2 |
+| PredixSport | 9 | 14 | 64% | 2 |
+| Bueon | 4 | 10 | 40% | 1 |
+| Sports Mole | 3 | 8 | 38% | 1 |
 | Winning Arena | 1 | 1 | 100% | 1 |
-| Before You Bet | 1 | 3 | 33% | 1 |
+| Before You Bet | 1 | 5 | 20% | 2 |
 | Radio Times | 5 | 10 | 50% | 1 |
 | Flashscore | -- | -- | -- | 0 |
 | BettingPros | -- | -- | -- | 0 |
-| Action Network | -- | -- | -- | 0 |
-| **Consensus** | 6 | 10 | 60% | 1 |
-| **Market (odds favourite)** | -- | -- | -- | 0 |
+| Action Network | 0 | 1 | 0% | 1 |
+| **Consensus** | 8 | 20 | 40% | 2 |
+| **Market (odds favourite)** | 4 | 10 | 40% | 1 |
 
 ---
 
@@ -64,9 +64,9 @@ Tracks how often predictions at each confidence tier are correct.
 
 | Tier | Correct | Total | Accuracy | Notes |
 |------|---------|-------|----------|-------|
-| High | 3 | 4 | 75% | Wolves upset was the miss |
-| Moderate | 2 | 4 | 50% | |
-| Low | 1 | 2 | 50% | |
+| High | 5 | 8 | 63% | GW29: Wolves and Man City upsets cost 2 High picks |
+| Moderate | 2 | 6 | 33% | GW29: Leeds and Spurs both lost as predicted Home winners |
+| Low | 1 | 6 | 17% | GW29: 0/4 Low picks correct |
 
 ---
 
@@ -76,16 +76,79 @@ Tracks whether the consensus or the market favourite was more often correct.
 
 | Metric | Value |
 |--------|-------|
-| Gameweeks tracked | 1 |
-| Consensus correct | 6/10 (60%) |
-| Market favourite correct | N/A (no odds data for GW28) |
-| Both agreed and correct | -- |
-| Consensus correct, market wrong | -- |
-| Market correct, consensus wrong | -- |
+| Gameweeks tracked | 2 |
+| Consensus correct | 8/20 (40%) |
+| Market favourite correct | 4/10 (40%) (GW29 only; GW28 had no odds data) |
+| Both agreed and correct | 2 (GW29: Everton, Arsenal) |
+| Consensus correct, market wrong | 0 |
+| Market correct, consensus wrong | 2 (GW29: Aston Villa vs Chelsea, Newcastle vs Man United) |
 
 ---
 
 ## Gameweek Results
+
+### Gameweek 29 (2026-03-03)
+
+| # | Home | Away | Actual Result | Consensus | Correct? | Market Fav | Market Correct? |
+|---|------|------|--------------|-----------|----------|-----------|----------------|
+| 1 | Bournemouth | Brentford | 0-0 (Draw) | Home Win (split) | No | Home (39%) | No |
+| 2 | Everton | Burnley | 2-0 (Home Win) | Home Win | Yes | Home (61%) | Yes |
+| 3 | Leeds United | Sunderland | 0-1 (Away Win) | Home Win | No | Home (50%) | No |
+| 4 | Wolves | Liverpool | 2-1 (Home Win) | Away Win | No | Away (69%) | No |
+| 5 | Aston Villa | Chelsea | 1-4 (Away Win) | Draw | No | Away (39%) | Yes |
+| 6 | Brighton | Arsenal | 0-1 (Away Win) | Away Win | Yes | Away (59%) | Yes |
+| 7 | Fulham | West Ham | 0-1 (Away Win) | Home Win | No | Home (47%) | No |
+| 8 | Man City | Nottm Forest | 2-2 (Draw) | Home Win | No | Home (73%) | No |
+| 9 | Newcastle | Man United | 2-1 (Home Win) | Away Win | No | Split H/A (37%) | Yes |
+| 10 | Tottenham | Crystal Palace | 1-3 (Away Win) | Home Win | No | Home (41%) | No |
+
+**Per-source accuracy this gameweek**:
+
+| Source | Predictions Made | Correct | Accuracy |
+|--------|-----------------|---------|----------|
+| Forebet | 8 | 1 | 13% |
+| PredixSport | 4 | 2 | 50% |
+| Bueon | 10 | 4 | 40% |
+| Sports Mole | 8 | 3 | 38% |
+| Before You Bet | 2 | 0 | 0% |
+| Action Network | 1 | 0 | 0% |
+
+**Per-source detail**:
+
+| # | Fixture | Actual | Forebet | PredixSport | Bueon | Sports Mole | Before You Bet | Action Network |
+|---|---------|--------|---------|-------------|-------|-------------|----------------|----------------|
+| 1 | BOU-BRE | Draw | Away Win (X) | Home Win (X) | Home Win (X) | Draw (/) | -- | -- |
+| 2 | EVE-BUR | Home Win | Home Win (/) | Home Win (/) | Home Win (/) | Home Win (/) | -- | -- |
+| 3 | LEE-SUN | Away Win | Home Win (X) | -- | Home Win (X) | Home Win (X) | -- | -- |
+| 4 | WOL-LIV | Home Win | Away Win (X) | Away Win (X) | Away Win (X) | Away Win (X) | -- | Away Win (X) |
+| 5 | AVL-CHE | Away Win | Draw (X) | -- | Away Win (/) | -- | Draw (X) | -- |
+| 6 | BHA-ARS | Away Win | -- | Away Win (/) | Away Win (/) | Away Win (/) | -- | -- |
+| 7 | FUL-WHU | Away Win | Home Win (X) | -- | Home Win (X) | -- | -- | -- |
+| 8 | MCI-NFO | Draw | Home Win (X) | -- | Home Win (X) | Home Win (X) | -- | -- |
+| 9 | NEW-MUN | Home Win | -- | -- | Home Win (/) | Away Win (X) | Away Win (X) | -- |
+| 10 | TOT-CRY | Away Win | Home Win (X) | -- | Home Win (X) | Home Win (X) | -- | -- |
+
+**Confidence tier accuracy this gameweek**:
+
+| Tier | Correct | Total | Accuracy |
+|------|---------|-------|----------|
+| High | 2 | 4 | 50% |
+| Moderate | 0 | 2 | 0% |
+| Low | 0 | 4 | 0% |
+
+**Consensus accuracy**: 2/10 (20%)
+**Market favourite accuracy**: 4/10 (40%)
+
+**Notable observations**:
+- Worst consensus accuracy on record. Only 2/10 correct, with 6 fixtures producing outright upsets or unexpected results.
+- Wolves 2-1 Liverpool was the biggest shock -- a unanimous 5/5 High-confidence Away Win pick undone by a 90+4' winner from bottom-placed Wolves. This mirrors the GW28 Wolves-Villa upset.
+- Man City 2-2 Nottm Forest was the second major miss -- a High-confidence Home Win at the Etihad derailed by a late Forest equaliser.
+- Tottenham's collapse continued (1-3 to Crystal Palace), defying 3/3 Home Win picks. The xG data in the report had flagged this as a risky pick.
+- The market outperformed the consensus this week (4/10 vs 2/10), correctly picking Chelsea at Villa and catching Newcastle vs Man United as a coin-flip.
+- Forebet had a historically poor week at 1/8 (13%), dragging its cumulative accuracy to 33%.
+- Bueon was the most reliable source at 4/10, correctly backing Chelsea (Away Win) and Newcastle (Home Win) where other sources missed.
+
+---
 
 ### Gameweek 28 (2026-02-28)
 
