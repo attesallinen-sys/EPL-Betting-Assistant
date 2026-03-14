@@ -18,6 +18,10 @@ Items are appended by agents at the end of each run. Review periodically and eit
 **[2026-03-10] Accuracy GW29** [ACCURACY] Before You Bet at 20% cumulative (1/5). Small sample but trending poorly. Monitor over next 3 gameweeks.
 **[2026-03-10] Accuracy GW29** [ACCURACY] xG contradiction flagged in the report for Tottenham vs Crystal Palace proved prescient -- Palace won 1-3. xG signals may deserve more weight in split/borderline picks.
 **[2026-03-10] Accuracy GW29** [ACCURACY] Market outperformed consensus 4/10 vs 2/10. First gameweek with market data -- too early for conclusions but worth tracking.
+**[2026-03-14] Agent 1 GW30** [DATA] xG source returned full season totals for all teams but no reliable last-5 xG trend split in fetchable output. Suggested action: add a secondary trend-specific xG source in `knowledge/sources.md`.
+**[2026-03-14] Agent 2 GW30** [SOURCE] Sports Mole provided only Saturday fixture previews (5/10) in reliably fetchable form; Sunday/Monday previews were not consistently indexable at run time.
+**[2026-03-14] Agent 2 GW30** [SOURCE] Before You Bet, Winning Arena, and BettingPros had no clearly usable GW30 pages available during this run.
+**[2026-03-14] Agent 2 GW30** [SOURCE] Flashscore returned a "GW30" article tied to a mismatched fixture slate/season context; excluded from consensus to avoid data contamination.
 
 ## Archive
 
