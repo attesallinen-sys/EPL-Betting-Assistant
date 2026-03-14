@@ -17,10 +17,7 @@ This is the task checklist for **Agent 1 (Data Collection)**. Follow it step by 
 
 ## Phase 1: Fetch Fixtures
 
-- [ ] Fetch the fixture list using the sources in `knowledge/sources.md`:
-  1. Use `WebSearch` for "Premier League fixtures gameweek [number] [date]". This is the most reliable method.
-  2. If search results are insufficient, try `WebFetch` on BBC Sport (`https://www.bbc.co.uk/sport/football/premier-league/scores-fixtures`). Note: BBC often returns date headers but no team names due to JavaScript rendering.
-  3. As a last resort, try premierleague.com fixtures page.
+- [ ] Fetch fixtures using the Fixture Data Source section in `knowledge/sources.md` (follow its source order and fallback strategy).
 - [ ] Record all fixtures:
   - Home team
   - Away team
@@ -32,10 +29,7 @@ This is the task checklist for **Agent 1 (Data Collection)**. Follow it step by 
 
 ## Phase 2: Fetch League Table and Form Data
 
-- [ ] Fetch the current league table and home/away splits:
-  1. Try `WebFetch` on SoccerStats.com (`https://www.soccerstats.com/homeaway.asp?league=england`). This single page provides the full table, home/away W-D-L, and form data.
-  2. If SoccerStats fails, use `WebSearch` for "Premier League table standings [date]".
-  3. As a fallback, try BBC Sport (`https://www.bbc.co.uk/sport/football/premier-league/table`). Note: BBC returns stats but team names are often missing due to JavaScript.
+- [ ] Fetch league table and form data using the League Table and Form Data section in `knowledge/sources.md`.
 - [ ] Record for each team (at minimum):
   - League position
   - Games played (P)
@@ -50,11 +44,7 @@ This is the task checklist for **Agent 1 (Data Collection)**. Follow it step by 
 
 ## Phase 2.5: Fetch xG Data
 
-- [ ] Fetch expected goals (xG) data using the xG sources in `knowledge/sources.md`:
-  1. Use `WebSearch` with query: `Premier League 2025-2026 xG xGA all teams season stats table expected goals against`. StatMuse results typically appear with per-team data.
-  2. If incomplete, try `WebSearch` with query: `site:fbref.com premier league 2025-2026 expected goals stats`.
-  3. If still incomplete, try: `Premier League xG table 2025-2026 season team stats`.
-  4. For any missing teams, try per-team search: `[team name] xG 2025-2026 season expected goals`.
+- [ ] Fetch expected goals (xG) data using the xG Data Sources section in `knowledge/sources.md`.
 - [ ] For each team, record:
   - Season xG (total expected goals created)
   - Season xGA (total expected goals against)
@@ -75,10 +65,7 @@ This is the task checklist for **Agent 1 (Data Collection)**. Follow it step by 
 
 ## Phase 3: Fetch Bookmaker Odds
 
-- [ ] Fetch odds/probabilities for each fixture using the odds sources in `knowledge/sources.md`:
-  1. Try `WebFetch` on Gambletron2000.com fixture pages for fair (vig-removed) probabilities. This is the most reliable source.
-  2. If Gambletron is incomplete, try Dimers.com or RotoWire for additional fixtures.
-  3. As a fallback, try Forebet, OddsPortal, or `WebSearch` for "Premier League gameweek [number] odds".
+- [ ] Fetch odds/probabilities using the Odds Sources section in `knowledge/sources.md` (primary, secondary, then fallback sources).
 - [ ] For each fixture, record:
   - Home/Draw/Away **fair probabilities** (summing to ~100%)
   - Decimal odds (derived from fair probabilities with ~5% overround if the source provides probabilities only, or directly from the source if decimal odds are provided)
@@ -108,3 +95,10 @@ This is the task checklist for **Agent 1 (Data Collection)**. Follow it step by 
 ## Output
 
 The completed file at `data/GWxx-matchweek-data.md` is the handoff artifact. Agent 2 (Predictions & Report) will read this file as its starting point.
+
+---
+
+## Finalize Feedback Loop
+
+- [ ] Fill `## Agent Observations` in the data file (`None` if no issues).
+- [ ] Append concise observations to `feedback-log.md` `## Open` using the required format from `.cursor/rules/research-workflow.mdc`.

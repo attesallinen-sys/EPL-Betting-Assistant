@@ -31,49 +31,23 @@ Follow this checklist step by step every time you generate a matchweek predictio
 
 ## Phase 2: Gather Predictions
 
-Work through sources in priority order. For each source, attempt to retrieve predictions for **all** fixtures.
+Work through sources in priority order from `knowledge/sources.md`. For each source, attempt to retrieve predictions for **all** fixtures.
 
 ### P1 Sources (always consult)
 
-- [ ] **Forebet**: Fetch predictions from `forebet.com/en/football-tips-and-predictions-for-england/premier-league`.
-  - For each fixture, record: predicted outcome (1/X/2), probability percentages, predicted score, over/under 2.5 prediction, BTTS prediction.
-  - If the main page doesn't load, search: `site:forebet.com premier league predictions`.
-
-- [ ] **PredixSport**: Fetch predictions from `predixsport.com/premier_league_predictions`.
-  - For each fixture, record: win/draw/loss probabilities, over/under 2.5 probability, BTTS probability, any analysis text.
-  - If the page doesn't load, search: `site:predixsport.com premier league predictions`.
-
-- [ ] **Bueon**: Fetch predictions from `bueon.com/en/ai-predictions/competition/england-premier-league`.
-  - For each fixture, record: home/draw/away probability percentages.
-  - If the page doesn't load, search: `site:bueon.com england premier league ai predictions`.
-
-- [ ] **Sports Mole**: Fetch from `sportsmole.co.uk/football/premier-league-predictions/`.
-  - Find the current matchweek's Saturday and Sunday prediction articles and fetch both.
-  - For each fixture, record: predicted score, qualitative reasoning.
-  - If the index page doesn't work, search: `site:sportsmole.co.uk premier league predictions [day] [month] [year]`.
+- [ ] Consult every P1 source listed in `knowledge/sources.md` using the source-specific URL/search strategy documented there.
+- [ ] For each fixture, extract available: 1X2 outcome, probabilities, predicted score, O/U 2.5, BTTS, and reasoning.
 
 ### P2 Sources (consult after P1)
 
-- [ ] **Winning Arena**: Search `site:winningarena.com premier league predictions this week` and fetch the results.
-  - For each fixture, record: predicted outcome, over/under, BTTS, any expert reasoning.
-
-- [ ] **Before You Bet**: Search `site:beforeyoubet.com.au EPL matchday [number] preview betting tips` and fetch the results.
-  - For each fixture covered, record: predicted outcome, specific betting tip, qualitative reasoning.
-
-- [ ] **Flashscore**: Search `site:flashscore.co.uk premier league gameweek [number] predictions` and fetch the results.
-  - For each fixture covered, record: predicted outcome/tip, qualitative reasoning, form/H2H stats.
-
-- [ ] **BettingPros**: Search `site:bettingpros.com premier league matchday [number] predictions [year]` and fetch the results.
-  - For each fixture covered, record: predicted outcome, qualitative reasoning, stats.
-
-- [ ] **Action Network**: Search `site:actionnetwork.com premier league best bets predictions picks [month] [year]` and fetch the results.
-  - For each fixture covered, record: predicted outcome, win probability (if provided), reasoning.
+- [ ] Consult P2 sources from `knowledge/sources.md` after P1 coverage is complete.
+- [ ] Record only fixtures actually covered by the source (do not infer missing predictions).
 
 ### Fallback source discovery
 
 - [ ] **Count usable P1 sources**. If fewer than 3 P1 sources returned prediction data:
-  1. Search `premier league predictions gameweek [number] [year]` and evaluate the top results.
-  2. Look for sites with structured predictions (probabilities, predicted outcomes).
+  1. Use the fallback discovery guidance in `knowledge/sources.md` and evaluate top results.
+  2. Prefer sites with structured predictions (probabilities, predicted outcomes).
   3. Record predictions from the best alternative source found.
   4. Note the discovered source in the report's Sources section.
 
@@ -120,12 +94,15 @@ For each fixture in the matchweek:
 
 Skip this subsection if the data file has no xG data.
 
+- [ ] Apply this two-level xG rule consistently:
+  - **Hard regression flag (5+)**: Comes from Agent 1 data file tagging and is the primary trigger for explicit regression warnings.
+  - **Analysis signal (3+)**: Can still be discussed in reasoning when it materially informs the pick, even if not hard-flagged.
 - [ ] **Check for regression risks**: For each fixture, review both teams' overperformance flags from the data file.
-  - If a team is flagged for **attacking regression** (GF - xG >= 3): their goal output may be unsustainable. Note this if the consensus backs them to win or if Over 2.5 is the goals consensus.
-  - If a team is flagged for **defensive regression** (xGA - GA <= -3): they may concede more going forward. Note this if the consensus backs a clean sheet or low-scoring game.
+  - If a team is hard-flagged for **attacking regression** (GF - xG >= 5): their goal output may be unsustainable. Note this if the consensus backs them to win or if Over 2.5 is the goals consensus.
+  - If a team is hard-flagged for **defensive regression** (xGA - GA <= -5): they may concede more going forward. Note this if the consensus backs a clean sheet or low-scoring game.
 - [ ] **Cross-check xG vs. consensus**: Does the xGD ranking support the predicted outcome? If xG data contradicts the consensus (e.g., consensus says Home Win but the away team has a much stronger xGD), note this as a reason for caution.
 - [ ] **Cross-check xG vs. market odds**: If xGD suggests a team is stronger than the market prices them (or weaker), note the divergence. This can reinforce or weaken a value bet flag.
-- [ ] **Integrate into reasoning**: Where xG provides a clear signal (supports or contradicts the consensus), weave it into the fixture's key reasoning. Do not force xG commentary onto every fixture -- only include it where the signal is meaningful (overperformance >= 3 goals, or xGD contradicts the consensus).
+- [ ] **Integrate into reasoning**: Where xG provides a clear signal (supports or contradicts the consensus), weave it into the fixture's key reasoning. Do not force xG commentary onto every fixture -- only include it where the signal is meaningful (3+ divergence or xGD contradiction), prioritizing 5+ hard flags.
 
 ---
 
@@ -142,23 +119,23 @@ Skip this subsection if the data file has no xG data.
   - Goals market summary
   - xG context line (optional -- include when xG diverges meaningfully from actual results or contradicts the consensus; omit when xG simply confirms what other data already shows)
   - Key reasoning with specific stats
-- [ ] Write the **Value Picks** section (1-3 highest-confidence predictions with strong edge vs. market).
+- [ ] Write the **Value Picks** section using strict eligibility:
+  - Must have 3+ source coverage.
+  - Must be High or Moderate confidence.
+  - Positive edge is preferred. If no eligible fixture has positive edge, state this explicitly and avoid forcing value claims.
 - [ ] Write the **Split Decisions** section (fixtures where sources disagree, with analysis of why).
 - [ ] Write the **Accumulator Ideas** section (2-3 suggested accumulators with disclaimer).
 - [ ] List all **Sources** consulted with links and coverage notes.
+- [ ] Add the **Source Health** block (coverage, unavailable/unusable sources with reason, timing sensitivity, data integrity exclusions).
 - [ ] Include the **Disclaimer** at the bottom.
+- [ ] Include the **Prediction Summary** table (mandatory; required for accuracy review).
 
 ### Quality checks
 
-- [ ] Every fixture in the matchweek is covered.
-- [ ] Every prediction is attributed to a named source.
-- [ ] No predictions are fabricated.
-- [ ] Reasoning is specific: every fixture includes at least one concrete stat.
-- [ ] Confidence tiers are assigned correctly per definitions.
-- [ ] Market odds comparison is included for each fixture.
-- [ ] xG context is included for fixtures where regression flags or xG-consensus contradictions exist.
-- [ ] Source breakdown tables only list sources with predictions (no empty rows).
-- [ ] Professional, analytical tone throughout.
+- [ ] Run the quality checklist in `.cursor/rules/report-writing.mdc` before publishing.
+- [ ] Verify the report includes a `Prediction Summary` table.
+- [ ] Verify the report includes a `Source Health` block.
+- [ ] Verify the report references Agent 1 output in its Sources/metadata (odds and xG source attribution from `data/GWxx-matchweek-data.md`).
 
 ---
 
@@ -167,6 +144,7 @@ Skip this subsection if the data file has no xG data.
 - [ ] Save the report as `reports/GWxx-YYYY-MM-DD-predictions.md`.
 - [ ] Update `reports/index.md` with a new row for this report.
 - [ ] Confirm the report file was saved successfully.
+- [ ] Fill the report `## Agent Observations` section and append observations to `feedback-log.md` `## Open` using the required format in `.cursor/rules/research-workflow.mdc`.
 
 ---
 
@@ -195,7 +173,8 @@ Run this phase **after the matchweek results are in** (typically Monday/Tuesday)
 
 ### Step 4: Compare predictions vs. results
 
-- [ ] Read the Prediction Summary table from the report (if present) to extract each source's prediction per fixture. If no summary table exists, extract predictions from the detailed match prediction sections.
+- [ ] Read the `Prediction Summary` table from the report to extract each source's prediction per fixture (required table).
+- [ ] Legacy fallback only: if reviewing an old historical report created before this requirement, extract predictions from detailed sections and note the missing summary table as a process issue.
 - [ ] For each fixture, compare:
   - Consensus prediction vs. actual result (Correct / Incorrect)
   - Each individual source's prediction vs. actual result
@@ -210,4 +189,4 @@ Run this phase **after the matchweek results are in** (typically Monday/Tuesday)
   - Update the Market vs. Consensus Comparison table.
   - **Recalculate source weights** if 5+ gameweeks of data exist (see formula in accuracy-log.md).
 - [ ] Update `reports/index.md` to add accuracy % for the gameweek.
-- [ ] If a source's cumulative accuracy falls below 40% over 5+ gameweeks, flag it for review in `knowledge/sources.md`.
+- [ ] Apply `knowledge/sources.md` **Source Reliability Governance** criteria to flag demotion/retirement/reinstatement actions.

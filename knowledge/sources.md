@@ -7,6 +7,12 @@ This file lists the curated free prediction sources the agent should consult for
 - **P1 (Primary)**: Reliable, structured prediction data with probabilities. Always consult these first.
 - **P2 (Secondary)**: Useful supplementary predictions with qualitative analysis. Consult after P1 sources are covered.
 
+## Fetch Policy (Global)
+
+- Default: use source-specific URLs first, then fall back to `WebSearch`.
+- Exception: when a source is known to be JavaScript-heavy or historically unreliable via direct fetch, use `WebSearch` first if the source section says so.
+- Always follow the source-specific instructions below when they conflict with this global default.
+
 ---
 
 ## P1 Sources
@@ -204,7 +210,9 @@ These sources are used by **Agent 1** to fetch expected goals (xG) data for each
 - **xGA (Expected Goals Against)**: The cumulative quality of chances a team has conceded.
 - **xGD (xG Difference)**: `xG - xGA`. Positive = creating better chances than conceding. The best proxy for underlying team quality.
 - **Overperformance (Goals - xG)**: When a team scores significantly more than their xG, they are likely benefiting from finishing luck and may regress. When they score less, they may be due for improvement.
-- A divergence of **5+ goals** between actual and expected over a season is a strong regression signal worth flagging.
+- Use a two-level threshold model across the project:
+  - **5+ goals** = hard regression flag (must be tagged in Agent 1 data files).
+  - **3+ goals** = analysis signal (can be referenced in Agent 2 reasoning when meaningful).
 
 ### StatMuse (Primary)
 
@@ -251,7 +259,7 @@ After fetching xG data:
 2. **If match counts differ**, scale xG to match the league table: `adjusted_xG = xG * (P_table / P_xg)`. Do the same for xGA.
 3. **Attacking overperformance**: `Actual Goals Scored - adjusted_xG`. Positive = scoring above expected. Negative = underperforming.
 4. **Defensive overperformance**: `adjusted_xGA - Actual Goals Conceded`. Positive = conceding fewer than expected. Negative = conceding more.
-5. Flag any team with an attacking or defensive overperformance magnitude of **5+ goals** as a regression candidate.
+5. Flag any team with an attacking or defensive overperformance magnitude of **5+ goals** as a hard regression candidate in the data file.
 
 ---
 
@@ -373,3 +381,29 @@ Premier League xG table 2025-2026 season team stats
 ## Source Accuracy
 
 After each matchweek's results are in, source accuracy should be tracked in `reports/accuracy-log.md`. Over time, this data informs which sources to trust most in split decisions and whether sources should be promoted, demoted, or retired.
+
+## Source Reliability Governance
+
+Use this policy during Accuracy Review and periodic maintenance:
+
+1. **Minimum evidence window**
+   - Do not demote/retire a source on tiny samples.
+   - Evaluate only after at least 5 gameweeks tracked or 20+ predictions logged (whichever comes first).
+
+2. **Demotion triggers (P1 -> P2, or P2 -> watchlist)**
+   - Cumulative accuracy below 40% after the minimum evidence window.
+   - Repeated low coverage (source provides predictions for fewer than 40% of fixtures in 3 consecutive gameweeks).
+   - Repeated access failure (unavailable/unusable in 3 consecutive gameweeks).
+   - Repeated data integrity issues (wrong season/mismatched fixture slate) in 2+ gameweeks.
+
+3. **Retirement triggers**
+   - A source remains demoted and still hits two or more demotion triggers for 3 additional gameweeks.
+   - A source no longer provides structured EPL predictions in a usable format.
+
+4. **Reinstatement criteria**
+   - A demoted source can return to active use after 3 consecutive gameweeks of usable data coverage and no integrity issues.
+   - Accuracy should be at or above the current all-source average during that reinstatement window.
+
+5. **Documentation requirements**
+   - Every status change (active, demoted, retired, reinstated) must be noted in `feedback-log.md` and reflected in this file.
+   - Keep retired sources in the `Retired Sources` section with date and reason.

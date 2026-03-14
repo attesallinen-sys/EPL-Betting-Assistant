@@ -5,59 +5,51 @@ alwaysApply: true
 
 # Research Workflow
 
-This project uses a two-agent pipeline. Read `AGENTS.md` for the full workflow overview.
+This project uses a two-agent pipeline. Use `AGENTS.md` for orchestration and prompts.
+Use task files for execution details. This rule intentionally avoids duplicating long checklists.
 
 ## Agent 1: Data Collection
 
-Agent 1 follows `tasks/fetch-matchweek-data.md`. Its job is to gather objective data. Phases 1-3 are independent and should run in parallel where possible.
+Agent 1 must follow `tasks/fetch-matchweek-data.md`.
 
-1. **Load sources**: Read `knowledge/sources.md` for fixture sources, league table sources, xG sources, and odds sources.
-2. **Get fixtures**: Fetch the matchweek fixture list. Use `WebSearch` first (most reliable), then BBC Sport or premierleague.com as fallbacks.
-3. **Get league context**: Fetch current league table, home/away splits, and form data. Use SoccerStats.com as the primary source, then `WebSearch` or BBC Sport as fallbacks. Record league position, games played, points, home/away W-D-L, goals scored/conceded for each team.
-4. **Get xG data**: Fetch expected goals data via `WebSearch` (StatMuse, FBref, or Understat -- never attempt direct `WebFetch` on these sites). Record xG, xGA, xGD per team with match counts. Normalize xG to match the league table's games played before calculating overperformance. Flag regression candidates at 5+ goals divergence. See "xG Data Sources" in `knowledge/sources.md`.
-5. **Get bookmaker odds**: Fetch fair probabilities from Gambletron2000.com (primary), or Dimers.com / RotoWire as secondaries. Forebet and OddsPortal are fallbacks only. See "Odds Sources" in `knowledge/sources.md`.
-6. **Save data file**: Output `data/GWxx-matchweek-data.md` using the template at `templates/matchweek-data-template.md`.
+Guardrails:
+- Treat `knowledge/sources.md` as the canonical source list and fetch policy.
+- Run independent fetch phases in parallel where the task checklist allows.
+- Normalize xG to league match counts before overperformance math.
+- Use `templates/matchweek-data-template.md` and save to `data/GWxx-matchweek-data.md`.
+- Never fabricate missing data; note gaps in the output file.
 
 ## Agent 2: Predictions & Report
 
-Agent 2 follows `tasks/matchweek-predictions.md`. Its job is to gather predictions, analyze, and write the report:
+Agent 2 must follow `tasks/matchweek-predictions.md`.
 
-1. **Load data file**: Read `data/GWxx-matchweek-data.md` (produced by Agent 1). If it doesn't exist, tell the user to run Agent 1 first.
-2. **Load accuracy data**: Read `reports/accuracy-log.md` for source weights. Use default weight 1.0 if no data exists yet.
-3. **Fetch predictions source by source**: For each source in priority order:
-   - First try `WebFetch` on the source's direct URL.
-   - If that fails, use `WebSearch` with source-specific query templates from `knowledge/sources.md`.
-   - Extract: predicted outcome, probabilities, predicted score, O/U 2.5, BTTS, and reasoning.
-4. **Fallback source discovery**: If fewer than 3 P1 sources returned data, search for alternatives.
-5. **Analyze with weighted consensus**: Apply source weights when tallying predictions. Compare consensus probabilities to market odds from the data file.
-6. **Apply xG analysis**: Use xG data from the data file to flag regression risks and cross-check the consensus. Include xG context in reasoning where it provides a meaningful signal.
-7. **Record everything**: Maintain a working tally per fixture. Note which sources were consulted.
-8. **Handle gaps honestly**: Never fabricate predictions to fill gaps. If xG data is unavailable, proceed without it.
+Guardrails:
+- Load `data/GWxx-matchweek-data.md` first; if missing, stop and ask to run Agent 1.
+- Use source priorities and fallback strategy from `knowledge/sources.md`.
+- Apply source weights from `reports/accuracy-log.md` (default 1.0 when unavailable).
+- Use `templates/matchweek-report-template.md` and include `Prediction Summary`.
+- Never fabricate predictions; if coverage is thin, state the limitation clearly.
 
 ## Search Strategy
 
-- Use source-specific URLs first (more reliable than search), then fall back to `WebSearch`.
-- When using WebSearch, prefer `site:` queries to target specific prediction sites.
-- For fixture data (Agent 1), use `WebSearch` as the primary method: "Premier League fixtures gameweek [number] [date]". BBC Sport and premierleague.com are JavaScript-heavy and unreliable for team names.
-- For league table data (Agent 1), use `WebFetch` on SoccerStats.com as the primary source. It provides table, home/away splits, and form on one page.
-- For odds data (Agent 1), use Gambletron2000.com as the primary source (fair probabilities per fixture). Dimers.com and RotoWire are secondaries. Forebet and OddsPortal frequently time out -- use only as fallbacks.
-- For xG data (Agent 1), `WebSearch` is the only reliable method. Do NOT attempt `WebFetch` on FBref or Understat (they always fail). Use StatMuse queries, `site:fbref.com` queries, or general queries like "Premier League xG table 2025-2026".
-- If predictions for a specific fixture are missing from a source, try "[home team] vs [away team] prediction [source name]".
+- Use source-specific URLs first, except for sources explicitly marked search-first in `knowledge/sources.md`.
+- Prefer `site:` queries when searching.
+- For known JavaScript-heavy pages (e.g., some fixture/xG/results endpoints), follow the source-specific search-first guidance in `knowledge/sources.md`.
 
 ## Fetching Best Practices
 
-- Prediction sites may be JavaScript-heavy. If `WebFetch` returns minimal content, fall back to `WebSearch`.
-- Process one source at a time to keep data organized.
-- After fetching from each source, immediately record the extracted data before moving to the next.
+- Process one source at a time and record extracted data immediately.
+- If `WebFetch` returns minimal content, switch to `WebSearch` using source query templates.
 
 ## Accuracy Review (Phase 6)
 
-After results are in, follow Phase 6 of `tasks/matchweek-predictions.md`. Key points:
+After results are in, follow Phase 6 of `tasks/matchweek-predictions.md`.
 
-- **Verify scores from two sources**: Never trust a single search result for scores. Cross-reference BBC Sport results against ESPN or another source. See "Results Sources" in `knowledge/sources.md`.
-- **Reconcile sources before recording**: Check which sources the report actually used against the accuracy log tables. Add any missing sources to the log before recording results.
-- **Use the Prediction Summary table**: If the report includes the structured Prediction Summary table, use it to extract predictions. This is faster and less error-prone than parsing narrative sections.
-- **Handle missing market data**: If Agent 1 was not run (no data file), mark market columns as N/A rather than skipping them.
+Key guardrails:
+- Verify final scores against two sources.
+- Reconcile consulted sources against `reports/accuracy-log.md` before scoring.
+- Use the report `Prediction Summary` table as the primary extraction source.
+- If Agent 1 data is unavailable for that week, mark market fields as N/A.
 
 ## Handling Limitations
 

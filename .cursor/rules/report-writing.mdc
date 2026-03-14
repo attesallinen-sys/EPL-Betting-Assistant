@@ -35,11 +35,12 @@ alwaysApply: false
 | Matchweek Overview | 2-3 sentences | Key storylines: title race, relegation, derbies, notable absences |
 | Predictions at a Glance | Table | All fixtures with consensus, confidence tier, source fraction, avg probability, market implied%, and edge |
 | Detailed Match Predictions | 80-150 words per fixture | Consensus, confidence tier, source breakdown table (only sources with data), market odds comparison, O/U and BTTS consensus, optional xG context line (when signal is meaningful), and reasoning with specific stats |
-| Value Picks | 50-100 words per pick | 1-3 highest-confidence predictions; requires 3+ source coverage AND High/Moderate tier; note edge vs. market |
+| Value Picks | 50-100 words per pick | 1-3 highest-confidence predictions; requires 3+ source coverage AND High/Moderate tier; include edge vs. market and explicitly state if no positive-edge candidates exist |
 | Split Decisions | 50-100 words per fixture | Fixtures with no clear consensus; explain disagreement; note what market odds imply |
 | Accumulator Ideas | 2-3 accumulators | Illustrative combinations from highest-confidence picks; with disclaimer |
 | Prediction Summary | Table | Flat table with one row per fixture, one column per source. Each cell = predicted outcome or "--". Used by Phase 6 accuracy review. Must not be omitted. |
 | Sources | List | All sources consulted with links and coverage notes; note any unavailable sources; list odds source and xG data source |
+| Source Health | 3-4 bullets | Coverage count, unavailable/unusable sources with reason, timing sensitivity, and any data integrity exclusions |
 
 ## Confidence Tiers
 
@@ -84,8 +85,8 @@ When no weights are available yet (fewer than 5 gameweeks tracked), use equal we
 - Reference actual factors: form, injuries, head-to-head, home/away splits, league position, motivation.
 - **When market odds diverge from consensus**: mention it in the reasoning (e.g., "The market prices this tighter than the sources suggest, implying more draw/upset risk").
 - **When xG data is available**: include an xG context line for fixtures where the data provides a meaningful signal. Specifically:
-  - Flag teams with attacking overperformance of 3+ goals (scoring above xG -- regression risk).
-  - Flag teams with defensive overperformance magnitude of 3+ goals (conceding fewer or more than xGA).
+  - Treat 5+ goal divergence as a **hard regression flag** (primary warning threshold).
+  - Treat 3+ goal divergence as an **analysis signal** (optional context when it meaningfully changes interpretation).
   - Note when xGD contradicts the consensus outcome or diverges from what the league table position suggests.
   - Do **not** force xG commentary onto every fixture. Only include it when the signal adds information beyond what the league table and form already convey.
   - Good: "Brighton are overperforming their xG by 4.2 goals (xG 32.1, actual 36.3), suggesting some regression risk in their attacking output."
@@ -122,10 +123,11 @@ Before finalizing a report, verify:
 - [ ] Reasoning is specific and references actual factors (not generic)
 - [ ] The Predictions at a Glance table is complete (including Market Impl% and Edge columns)
 - [ ] Market odds comparison is included for each fixture in the detailed section
-- [ ] Value Picks section highlights picks with strong consensus AND positive market edge
+- [ ] Value Picks section includes only eligible fixtures (3+ coverage and High/Moderate); if no positive-edge options exist, this is stated explicitly
 - [ ] Split Decisions section covers any fixtures with no clear consensus, with market context
 - [ ] xG context is included for fixtures with regression flags or xG-consensus contradictions (when xG data is available)
 - [ ] The Prediction Summary table is present with one row per fixture and one column per source consulted
 - [ ] All sources (prediction + odds + xG) are listed with links
+- [ ] The Source Health block is present and concise
 - [ ] The disclaimer is present at the bottom
 - [ ] Professional, analytical tone throughout

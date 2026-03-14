@@ -2,6 +2,7 @@
 
 **Match dates**: [YYYY-MM-DD] -- [YYYY-MM-DD]
 **Report generated**: [YYYY-MM-DD]
+**Data file**: `data/GWxx-matchweek-data.md`
 **Sources consulted**: [X] of [Y] ([list source names that returned data])
 
 ---
@@ -70,9 +71,9 @@
 
 ## Value Picks
 
-High-confidence predictions where sources strongly agree AND show positive edge vs. market odds. A fixture qualifies if (a) at least 3 sources provided a prediction, (b) the confidence tier is High or Moderate, and (c) ideally the consensus probability exceeds the market implied probability (positive edge).
+High-confidence predictions where sources strongly agree. A fixture qualifies only if (a) at least 3 sources provided a prediction and (b) confidence is High or Moderate. Positive edge vs market is preferred and should be highlighted; if no eligible fixture has positive edge, state that explicitly.
 
-<!-- List 1-3 qualifying fixtures. If no fixtures meet all criteria, note it and list the best available picks meeting criteria (a) and (b). -->
+<!-- List 1-3 qualifying fixtures. If none have positive edge, state that clearly and avoid making artificial value claims. -->
 
 ### [Home Team] vs [Away Team] -- [Predicted Outcome] ([Confidence tier], [X/Y sources], avg [XX%], edge [+X%])
 
@@ -149,6 +150,15 @@ Suggested accumulators built from the highest-confidence picks. These are illust
 **xG data source**: [Source name and URL, or "Not available" if xG data could not be fetched]
 
 <!-- Note any sources that were unavailable or had not yet posted predictions. -->
+
+### Source Health
+
+<!-- Standardized run-health block to reduce repeated notes across sections -->
+
+- **Coverage**: [X]/[Y] sources returned usable prediction data.
+- **Unavailable / unusable**: [Source -- short reason]
+- **Timing sensitivity**: [Any source likely to publish later]
+- **Data integrity exclusions**: [Any source excluded due to mismatched fixture slate/season]
 
 ---
 

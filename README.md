@@ -4,11 +4,13 @@ A Cursor AI agent pipeline that aggregates English Premier League match predicti
 
 ## How It Works
 
-The pipeline uses two agents run in sequence before each matchweek:
+The workflow runs in sequence each week:
 
-1. **Agent 1 (Data Collection)**: Fetches fixtures, league table, and bookmaker odds. Outputs a structured data file.
-2. **Agent 2 (Predictions & Report)**: Crawls prediction sources, aggregates into a weighted consensus, compares against market odds, and produces the report.
-3. **Accuracy Review** (after results): Tracks per-source accuracy and updates source weights for future reports.
+1. **Agent 1 (Data Collection)**: Produces the matchweek data file.
+2. **Agent 2 (Predictions & Report)**: Produces the matchweek prediction report.
+3. **Accuracy Review** (after results): Updates source accuracy and weights.
+
+Use `AGENTS.md` for orchestration, `tasks/` for execution checklists, `knowledge/sources.md` for source policy, and `.cursor/rules/` for guardrails.
 
 ## Quick Start
 
@@ -30,7 +32,7 @@ Generate predictions for Gameweek XX (YYYY-MM-DD)
 Update accuracy for Gameweek XX
 ```
 
-See `AGENTS.md` for the full workflow and resource guide.
+See `AGENTS.md` for full workflow ownership and run order.
 
 ## Project Structure
 
@@ -38,22 +40,22 @@ See `AGENTS.md` for the full workflow and resource guide.
 ├── AGENTS.md                           # Two-agent workflow and configuration
 ├── improvements.md                     # Planned future enhancements
 ├── knowledge/
-│   ├── sources.md                      # Prediction + odds sources with URLs
+│   ├── sources.md                      # Canonical source URLs, fetch order, fallbacks
 │   └── epl-context.md                  # EPL background, teams, format
 ├── tasks/
 │   ├── fetch-matchweek-data.md         # Agent 1 task checklist
-│   └── matchweek-predictions.md        # Agent 2 task checklist
+│   └── matchweek-predictions.md        # Agent 2 + accuracy checklist
 ├── templates/
 │   ├── matchweek-data-template.md      # Agent 1 output template
 │   └── matchweek-report-template.md    # Agent 2 report template
 ├── data/                               # Agent 1 output (gitignored)
 ├── reports/
-│   ├── index.md                        # Report archive
-│   ├── accuracy-log.md                 # Source accuracy + weights
+│   ├── index.md                        # Report archive + accuracy entry
+│   ├── accuracy-log.md                 # Source/tier/market accuracy + weights
 │   └── GWxx-YYYY-MM-DD-predictions.md  # Generated reports
 └── .cursor/rules/
-    ├── research-workflow.mdc           # Research workflow for both agents
-    └── report-writing.mdc             # Report formatting standards
+    ├── research-workflow.mdc           # Workflow guardrails
+    └── report-writing.mdc              # Report quality + formatting standards
 ```
 
 ## Disclaimer
