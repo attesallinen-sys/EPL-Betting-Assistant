@@ -22,6 +22,16 @@ Items are appended by agents at the end of each run. Review periodically and eit
 **[2026-03-14] Agent 2 GW30** [SOURCE] Sports Mole provided only Saturday fixture previews (5/10) in reliably fetchable form; Sunday/Monday previews were not consistently indexable at run time.
 **[2026-03-14] Agent 2 GW30** [SOURCE] Before You Bet, Winning Arena, and BettingPros had no clearly usable GW30 pages available during this run.
 **[2026-03-14] Agent 2 GW30** [SOURCE] Flashscore returned a "GW30" article tied to a mismatched fixture slate/season context; excluded from consensus to avoid data contamination.
+**[2026-03-20] Accuracy GW30** [ACCURACY] Consensus 2/10 (20%) again; six draws and Chelsea 0-1 Newcastle (unanimous home wrong) dominated misses. Market 3/10; Forebet best source at 4/10.
+**[2026-03-20] Accuracy GW30** [PROCESS] Split consensus (SUN-BHA) scored incorrect for headline accuracy; market Away favourite was right. Document if policy should credit directional lean.
+**[2026-03-20] Agent 1 GW31** [DATA] Blank gameweek: 8 fixtures only; Arsenal, Man City, Crystal Palace, Wolves idle (EFL Cup final). Template/report flows should not assume 10 matches for GW31.
+**[2026-03-20] Agent 1 GW31** [SOURCE] xgstat.com `WebFetch` timed out; xG table taken from search snippets with **P_xg=30 assumed** for normalization. Suggested action: re-fetch xG from FBref/Understat/StatMuse when extractable or add a resilient xG JSON endpoint to `knowledge/sources.md`.
+**[2026-03-20] Agent 1 GW31** [SOURCE] Gambletron2000 fixture pages returned home/away win % only in fetch output; draw fair % imputed as remainder. Suggested action: confirm whether deeper page sections list explicit draw %.
+**[2026-03-20] Agent 1 GW31** [SOURCE] StatMuse xG table URL did not yield a clean numeric table in automated fetch (navigation-heavy HTML).
+**[2026-03-20] Agent 2 GW31** [SOURCE] Forebet Premier League page timed out; consensus used PredixSport + Bueon + Sports Mole (+ Goal.com once for Villa–West Ham).
+**[2026-03-20] Agent 2 GW31** [DATA] PredixSport listed Man City–Crystal Palace (not on GW31 slate per Agent 1); that block excluded from extraction.
+**[2026-03-20] Agent 2 GW31** [SOURCE] Sports Mole had no fetchable GW31 Villa–West Ham preview; Goal.com used as one-off fallback — consider adding to `knowledge/sources.md` if repeated.
+**[2026-03-20] Agent 2 GW31** [DATA] Bueon returned 36%/28%/36% Home/Draw/Away for Tottenham–Forest (no 1X2 stance); recorded as “--” in Prediction Summary.
 
 ## Archive
 

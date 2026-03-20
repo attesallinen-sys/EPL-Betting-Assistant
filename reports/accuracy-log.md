@@ -43,18 +43,18 @@ After 5+ gameweeks of data, recalculate weights using:
 
 | Source | Correct | Total | Accuracy | Gameweeks Tracked |
 |--------|---------|-------|----------|-------------------|
-| Forebet | 6 | 18 | 33% | 2 |
-| PredixSport | 9 | 14 | 64% | 2 |
-| Bueon | 4 | 10 | 40% | 1 |
-| Sports Mole | 3 | 8 | 38% | 1 |
+| Forebet | 10 | 28 | 36% | 3 |
+| PredixSport | 12 | 24 | 50% | 3 |
+| Bueon | 7 | 20 | 35% | 2 |
+| Sports Mole | 4 | 13 | 31% | 2 |
 | Winning Arena | 1 | 1 | 100% | 1 |
 | Before You Bet | 1 | 5 | 20% | 2 |
 | Radio Times | 5 | 10 | 50% | 1 |
 | Flashscore | -- | -- | -- | 0 |
 | BettingPros | -- | -- | -- | 0 |
-| Action Network | 0 | 1 | 0% | 1 |
-| **Consensus** | 8 | 20 | 40% | 2 |
-| **Market (odds favourite)** | 4 | 10 | 40% | 1 |
+| Action Network | 1 | 5 | 20% | 2 |
+| **Consensus** | 10 | 30 | 33% | 3 |
+| **Market (odds favourite)** | 7 | 20 | 35% | 3 |
 
 ---
 
@@ -64,9 +64,9 @@ Tracks how often predictions at each confidence tier are correct.
 
 | Tier | Correct | Total | Accuracy | Notes |
 |------|---------|-------|----------|-------|
-| High | 5 | 8 | 63% | GW29: Wolves and Man City upsets cost 2 High picks |
-| Moderate | 2 | 6 | 33% | GW29: Leeds and Spurs both lost as predicted Home winners |
-| Low | 1 | 6 | 17% | GW29: 0/4 Low picks correct |
+| High | 6 | 13 | 46% | GW30: only Arsenal correct among five High picks; Liverpool/Brentford draws and Chelsea home loss |
+| Moderate | 3 | 8 | 38% | GW30: Man Utd correct; Burnley-Bournemouth draw wrong vs Bournemouth lean |
+| Low | 1 | 9 | 11% | GW30: 0/3 Low correct (split, Palace, Forest) |
 
 ---
 
@@ -76,16 +76,79 @@ Tracks whether the consensus or the market favourite was more often correct.
 
 | Metric | Value |
 |--------|-------|
-| Gameweeks tracked | 2 |
-| Consensus correct | 8/20 (40%) |
-| Market favourite correct | 4/10 (40%) (GW29 only; GW28 had no odds data) |
-| Both agreed and correct | 2 (GW29: Everton, Arsenal) |
+| Gameweeks tracked | 3 |
+| Consensus correct | 10/30 (33%) |
+| Market favourite correct | 7/20 (35%) (GW28: N/A; GW29--30 with odds) |
+| Both agreed and correct | 4 (GW29: Everton, Arsenal; GW30: Arsenal vs Everton, Man Utd vs Aston Villa) |
 | Consensus correct, market wrong | 0 |
-| Market correct, consensus wrong | 2 (GW29: Aston Villa vs Chelsea, Newcastle vs Man United) |
+| Market correct, consensus wrong | 3 (GW29: Aston Villa vs Chelsea, Newcastle vs Man United; GW30: Sunderland vs Brighton -- market Away fav, split consensus) |
 
 ---
 
 ## Gameweek Results
+
+### Gameweek 30 (2026-03-14)
+
+Scores cross-checked: Guardian / BBC Sport / ESPN match reports (March 14--16, 2026).
+
+| # | Home | Away | Actual Result | Consensus | Correct? | Market Fav | Market Correct? |
+|---|------|------|--------------|-----------|----------|-----------|----------------|
+| 1 | Burnley | Bournemouth | 0-0 (Draw) | Away Win | No | Away (53%) | No |
+| 2 | Sunderland | Brighton | 0-1 (Away Win) | Split (Away lean) | No | Away (45%) | Yes |
+| 3 | Chelsea | Newcastle | 0-1 (Away Win) | Home Win | No | Home (52%) | No |
+| 4 | Arsenal | Everton | 2-0 (Home Win) | Home Win | Yes | Home (70%) | Yes |
+| 5 | West Ham | Man City | 1-1 (Draw) | Away Win | No | Away (58%) | No |
+| 6 | Crystal Palace | Leeds | 0-0 (Draw) | Home Win | No | Home (39%) | No |
+| 7 | Man Utd | Aston Villa | 3-1 (Home Win) | Home Win | Yes | Home (57%) | Yes |
+| 8 | Nottm Forest | Fulham | 0-0 (Draw) | Home Win | No | Home (42%) | No |
+| 9 | Liverpool | Tottenham | 1-1 (Draw) | Home Win | No | Home (76%) | No |
+| 10 | Brentford | Wolves | 2-2 (Draw) | Home Win | No | Home (62%) | No |
+
+**Per-source accuracy this gameweek**:
+
+| Source | Predictions Made | Correct | Accuracy |
+|--------|-----------------|---------|----------|
+| Forebet | 10 | 4 | 40% |
+| PredixSport | 10 | 3 | 30% |
+| Bueon | 10 | 3 | 30% |
+| Sports Mole | 5 | 1 | 20% |
+| Action Network | 4 | 1 | 25% |
+
+**Per-source detail**:
+
+| # | Fixture | Actual | Forebet | PredixSport | Bueon | Sports Mole | Action Network |
+|---|---------|--------|---------|-------------|-------|-------------|----------------|
+| 1 | BUR-BOU | Draw | Draw (/) | Away Win (X) | Away Win (X) | Away Win (X) | -- |
+| 2 | SUN-BHA | Away Win | Home Win (X) | Away Win (/) | Away Win (/) | Home Win (X) | Draw (X) |
+| 3 | CHE-NEW | Away Win | Home Win (X) | Home Win (X) | Home Win (X) | Home Win (X) | Home Win (X) |
+| 4 | ARS-EVE | Home Win | Home Win (/) | Home Win (/) | Home Win (/) | Home Win (/) | Home Win (/) |
+| 5 | WHU-MCI | Draw | Away Win (X) | Away Win (X) | Away Win (X) | Away Win (X) | Away Win (X) |
+| 6 | CRY-LEE | Draw | Draw (/) | Home Win (X) | Home Win (X) | -- | -- |
+| 7 | MUN-AVL | Home Win | Home Win (/) | Home Win (/) | Home Win (/) | -- | -- |
+| 8 | NFO-FUL | Draw | Away Win (X) | Home Win (X) | Home Win (X) | -- | -- |
+| 9 | LIV-TOT | Draw | Home Win (X) | Home Win (X) | Home Win (X) | -- | -- |
+| 10 | BRE-WOL | Draw | Home Win (X) | Home Win (X) | Home Win (X) | -- | -- |
+
+**Confidence tier accuracy this gameweek**:
+
+| Tier | Correct | Total | Accuracy |
+|------|---------|-------|----------|
+| High | 1 | 5 | 20% |
+| Moderate | 1 | 2 | 50% |
+| Low | 0 | 3 | 0% |
+
+**Consensus accuracy**: 2/10 (20%)
+**Market favourite accuracy**: 3/10 (30%)
+
+**Notable observations**:
+- Draw-heavy week: six draws (half the slate), including Liverpool 1-1 Tottenham and Brentford 2-2 Wolves, sank most home/away consensus calls.
+- Chelsea 0-1 Newcastle was a clean sweep miss -- all five sources backed Chelsea at Stamford Bridge.
+- West Ham 1-1 Man City denied the unanimous High-confidence Away pick (and the largest consensus edge vs. odds).
+- Forebet led the panel at 4/10, benefiting from correct Draw calls on Burnley-Bournemouth and Crystal Palace-Leeds.
+- Sunderland 0-1 Brighton: market favourite (Brighton) was correct; consensus remained a split (scored incorrect as no single 1X2 outcome).
+- **Governance**: No demotion/retirement actions -- minimum evidence window (5 gameweeks or 20+ predictions) not met for panel sources under `knowledge/sources.md`.
+
+---
 
 ### Gameweek 29 (2026-03-03)
 
